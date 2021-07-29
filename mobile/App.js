@@ -1,21 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-export default function App() {
+import Navigation from './navigation';
+import Colors from './constants/Colors';
+
+export default function App(props) {
+  const [isLoadingComplete, setLoadingComplete] = React.useState(false);
+  const [telaInicial, setTelaInicial] = React.useState('Deslogado');
+
   return (
-    <View style={styles.container}>
-      <Text>TESTE</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <Navigation telaInicial={telaInicial}/>
+      <StatusBar backgroundColor={Colors.colorStatusBar} style="light" />
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
