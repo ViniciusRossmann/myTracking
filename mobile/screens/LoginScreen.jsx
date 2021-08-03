@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, Alert, StyleSheet, Image, ScrollView, ActivityIndicator, AsyncStorage, SafeAreaView} from 'react-native';
-import { SvgXml } from "react-native-svg"; 
 
 import { TextInput } from 'react-native-paper';
 import Colors from '../constants/Colors';
 import Layout from '../constants/Layout';
-
-import Logo from '../assets/logo_my_tracking.svg';
-
-//const requests = require('../network/Requests');
+import Requests from '../network/Requests';
 
 export default function LoginScreen({ route, navigation }){ 
     const [username, setUsername] = useState('');
@@ -22,50 +18,47 @@ export default function LoginScreen({ route, navigation }){
         }
         
         setLoading(true);
-        /*var token = await requests.fazLogin(username, password);
 
-        if (token == "!error"){
-            setLoading(false);
-            Alert.alert("Atenção!", "Erro ao acessar o servidor.");
-        }
-        else if(token){
-            try{
-                await AsyncStorage.setItem('@HMwheels:usuario', username);
-                await AsyncStorage.setItem('@HMwheels:senha', password);
-                await AsyncStorage.setItem('@HMwheels:token', token);
+        await Requests.driverLogin(username, password, async (status, token)=>{
+            if(token==null||token==""){
+                Alert.alert("Atenção!", status);
+                setLoading(false);
             }
-            catch (error) {
-                console.log("Erro ao gravar dados na memoria");
+            else{
+                //save login information
+                try{
+                    await AsyncStorage.setItem('@myTracking:user', username);
+                    await AsyncStorage.setItem('@myTracking:password', password);
+                    await AsyncStorage.setItem('@myTracking:token', token);
+                }
+                catch (error) {
+                    console.log(error);
+                }
+                finally{
+                    setLoading(false);
+                }
+                console.log("logado com sucesso");
+                //navigate to home screen
+                //navigation.navigate('Logado', { screen: 'Home' });
             }
-
-            setLoading(false);
-            navigation.navigate('Logado', { screen: 'Home' });
-        }
-        else{
-            setLoading(false);
-            Alert.alert("Login inválido!", "Usuário ou senha incorretos, favor verificar.");
-            setPassword('');
-        }*/
-
-        setLoading(false);//
+        });
     }
 
     return (
-        <SafeAreaView style={estilo.container}>
+        <SafeAreaView style={style.container}>
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <View>
-                <View style={{ alignItems: 'center' }}>
-                    <Image resizeMode="contain" source={require('../assets/logo_my_tracking.png')} style={estilo.logo}/>
+                <View style={style.center}>
+                    <Image resizeMode="contain" source={require('../assets/logo_login.png')} style={style.logo}/>
                 </View>
-            
-                <TextInput theme={{ colors: {placeholder: Colors.colorText, text: Colors.colorText, primary: Colors.colorText, background: Colors.colorBackground}}} underlineColor={Colors.colorText} selectionColor={Colors.colorPrimary} value={username} autoCapitalize="characters" style={estilo.entrada} label="Usuário" onChangeText={username => setUsername(username)}/>
-                <View style={estilo.separador}></View>
-                <TextInput theme={{ colors: {placeholder: Colors.colorText, text: Colors.colorText, primary: Colors.colorText, background: Colors.colorBackground}}} underlineColor={Colors.colorText} selectionColor={Colors.colorPrimary} secureTextEntry={true} style={estilo.entrada} label="Senha" value={password} onChangeText={password => setPassword(password)}/>
-                    <TouchableOpacity style={estilo.btEntrar} onPress={entrarPressionado}>
+                <TextInput theme={inputTheme} underlineColor={Colors.colorText} selectionColor={Colors.colorPrimary} value={username} style={style.input} label="Usuário" onChangeText={username => setUsername(username)}/>
+                <View style={style.separator}></View>
+                <TextInput theme={inputTheme} underlineColor={Colors.colorText} selectionColor={Colors.colorPrimary} secureTextEntry={true} style={style.input} label="Senha" value={password} onChangeText={password => setPassword(password)}/>
+                    <TouchableOpacity style={style.btLogin} onPress={entrarPressionado}>
                         {loading ? 
                             (<ActivityIndicator size="large" color="#FFF" />) : 
-                            (<Text style={estilo.txtEntrar}>Entrar</Text>)
+                            (<Text style={style.txtLogin}>Login</Text>)
                         }
                     </TouchableOpacity>
             </View>
@@ -75,47 +68,56 @@ export default function LoginScreen({ route, navigation }){
     );
 }
 
-//constantes frequetemente usadas no estilo
-const tamanhoBtns = 18;
-const tamanho = 18;
-const largura = Layout.window.width * 0.8;
+//TextInput style
+const inputTheme = { colors: {placeholder: Colors.colorText, text: Colors.colorText, primary: Colors.colorText, background: Colors.colorBackground}};
 
-//estilos dos elementos
-const estilo = StyleSheet.create({
-    separador: {
+//elements width
+const width = Layout.window.width * 0.8;
+
+//stylesheet
+const style = StyleSheet.create({
+    separator: {
         height: 20
     },
     container: {
         flex: 1,
         backgroundColor: Colors.colorBackground //3579b7
     },
-    entrada:{
-        width: largura, //280
-        height: 55,
-        fontSize: tamanho,
+    center: {
+        alignItems: 'center'
     },
-    txtCadastrar:{
+    mainView: {
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center'
+    },
+    input:{
+        width: width, //280
+        height: 55,
+        fontSize: 18,
+    },
+    txtCad:{
         textAlign: "center",
-        fontSize: tamanhoBtns,
+        fontSize: 18,
         color: Colors.colorText,
         marginTop: 20,
         marginBottom: 40,
     },
-    btEntrar:{
+    btLogin:{
         backgroundColor: Colors.colorPrimary,
-        width: largura,
+        width: width,
         height: 45,
         marginTop: 40,
         justifyContent: 'center',
         alignItems: 'center'
     },
     logo:{
-        //width: largura,
-        height: 180
+        width: width-60,
+        //height: 130
     },
-    txtEntrar:{
+    txtLogin:{
         textAlign: "center",
-        fontSize: tamanhoBtns,
+        fontSize: 18,
         color: Colors.colorText,
     },
 });

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Redirect, Route } from "react-router";
-import api from '../../services/api';
+const requests = require('../../services/requests');
 
 interface deliver {
     _id: string,
@@ -14,26 +14,24 @@ interface deliver {
 }
 
 const Home: React.FC = () => {
-    const [auth, setAuth] = useState(null);
+    const [auth, setAuth]: any = useState(null);
     const [user, setUser] = useState({nome: ""});
     const [items, setItems] = useState([]);
 
     useEffect(() => {
-        async function fetchAPI() {
-            var res = await api.post('/current-session', {}, { headers: { 'Content-Type': 'application/json' }, withCredentials: true });
-            setAuth(res.data.status);
-            if(res.data.status){
-                setUser(res.data.user);
-                res = await api.post('/get-deliveries', {}, { headers: { 'Content-Type': 'application/json' }, withCredentials: true });
-                setItems(res.data.data);
-            }
-        }
+        const loggedin = Boolean(localStorage.getItem('loggedin'));
+        setAuth(loggedin);
         document.body.setAttribute("class", "");
-        fetchAPI()
+        if (loggedin) loadDeliveries();
     }, [])
 
+    const loadDeliveries = async () => {
+        var data = await requests.getDeliveries();
+        console.log("Res: "+JSON.stringify(data));
+    }
+
     const logout = () => {
-        api.post('/logout', {}, { headers: { 'Content-Type': 'application/json' }, withCredentials: true });
+        localStorage.clear();
         window.location.reload();
     }
 

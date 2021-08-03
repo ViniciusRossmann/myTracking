@@ -1,11 +1,11 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
 
 const Acessar: React.FC = () => {
     const history = useHistory();
     const [formData, setFormData] = useState({
-        user: '',
+        login: '',
         password: ''
     });
     const [loginError, setLoginError] = useState(null);
@@ -24,10 +24,14 @@ const Acessar: React.FC = () => {
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
-        var res = await api.post('acessar', formData, { headers: { 'Content-Type': 'application/json' }, withCredentials: true });
+        var res = await api.post('user_auth', formData, { headers: { 'Content-Type': 'application/json' } });
         console.log(res.data);
         setLoginError(res.data.msg);
         if (res.data.status) {
+            localStorage.setItem('loggedin', "true");
+            localStorage.setItem('user', formData.login);
+            localStorage.setItem('password', formData.password);
+            localStorage.setItem('token', res.data.token);
             history.push('/');
         }
     }
@@ -57,31 +61,23 @@ const Acessar: React.FC = () => {
                                 </div>
                                 <form className="user" onSubmit={handleSubmit}>
                                     <div className="form-group">
-                                        <input type="text"
-                                            name="nome"
-                                            id="nome"
-                                            onChange={handleInputChange}
-                                            className="form-control form-control-user"
-                                            placeholder="Nome" />
-                                    </div>
-                                    <div className="form-group">
                                         <input
                                             type="text"
-                                            name="cpf"
-                                            id="cpf"
+                                            name="login"
+                                            id="login"
                                             className='form-control form-control-user'
                                             onChange={handleInputChange}
-                                            placeholder='CPF'
+                                            placeholder='Email'
                                         />
                                     </div>
                                     <div className="form-group">
                                         <input
-                                            type="text"
-                                            name="cep"
-                                            id="cep"
+                                            type="password"
+                                            name="password"
+                                            id="password"
                                             className='form-control form-control-user'
                                             onChange={handleInputChange}
-                                            placeholder='CEP'
+                                            placeholder='Senha'
                                         />
                                     </div>
                                     <button type="submit" className="btn btn-primary btn-user btn-block" style={{ marginTop: "1rem" }}>Confirmar</button>

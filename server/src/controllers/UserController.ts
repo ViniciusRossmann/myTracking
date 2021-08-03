@@ -1,56 +1,73 @@
 import * as express from 'express';
-
 import MongoConnector from '../database/MongoConnector';
 
-class User {
-  nome: string;
-  cpf: string;
-  cep: string;
-}
+const bcrypt = require('bcrypt');
+require("dotenv-safe").config();
+const jwt = require('jsonwebtoken');
 
-declare module 'express-session' {
-  interface SessionData {
-    loggedin: Boolean;
-    user: User;
-  }
-}
+import { User } from '../interfaces'
 
 class UserController {
 
-  async acessar(request: express.Request, response: express.Response) {
-    const { nome, cpf, cep } = request.body;
-    if (nome == "" || cpf == "" || cep == "" || (!nome || !cpf || !cep)) {
-      return response.json({ status: false, msg: "Dados inválidos!" });
+  //authenticate user login and returns an access token
+  async authentication(request: express.Request, response: express.Response) {
+    const { login, password } = request.body;
+    if (!login || !password) {
+      return response.json({ status: false, msg: "Dados insuficientes", token: null });
     }
-    MongoConnector.getViagens({ cpf: cpf, cep: cep }, (err, data) => {
-      if (err) return response.json({ status: false, msg: "Erro inesperado!" });
-      if (data.length == 0) {
-        return response.json({ status: false, msg: "Nenhuma viagem encontrada!" });
+    MongoConnector.getUserByEmail(login, (err, user) => {
+      if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados", token: null });
+      if (!user || user == {}) {
+        return response.json({ status: false, msg: "Email inválido", token: null });
       }
       else {
-        request.session.loggedin = true;
-        var user: User = {
-          nome: nome,
-          cpf: cpf,
-          cep: cep
-        }
-        request.session.user = user;
-        return response.json({ status: true, msg: "Ok" });
+        bcrypt.compare(password, user.password, function (err, res) {
+          if (res) {
+            const id = user._id;
+            const token = jwt.sign({ id }, process.env.SECRET, {
+              expiresIn: 300 // expires in 5min
+            });
+            return response.json({ status: true, msg: "Autenticação efetuada", token: token });
+          }
+          else {
+            return response.json({ status: false, msg: "Senha incorreta", token: null });
+          }
+        });
       }
     });
   }
 
-  async session(request: express.Request, response: express.Response) {
-    if (request.session.loggedin) {
-      return response.json({ status: true, user: request.session.user });
-    }
-    else return response.json({ status: false });
-  }
+  //register a new user
+  async register(request: express.Request, response: express.Response) {
+    var { cpf, email, password } = request.body;
+    if (!cpf || !email || !password) return response.json({ status: false, msg: "Dados inválidos" });
 
-  async logout(request: express.Request, response: express.Response) {
-    request.session.loggedin = false;
-    request.session.user = null;
-    return response.json({});
+    MongoConnector.getUserByEmail(email, (err, res) => {
+      if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados" });
+      else if (res) {
+        return response.json({ status: false, msg: "Email em uso" });
+      }
+      else {
+        bcrypt.hash(password, 10, function (err, hash) {
+          if (err) {
+            response.json({ status: false, msg: "Erro ao salvar usuário" });
+          }
+          else {
+            var user: User = {
+              cpf: cpf,
+              email: email,
+              password: hash
+            }
+
+            MongoConnector.insertUser(user, (err, res) => {
+              if (err) response.json({ status: false, msg: "Erro ao salvar usuário" });
+              else response.json({ status: true, msg: "Usuário cadastrado" });
+            });
+          }
+        });
+      }
+
+    });
   }
 
 }
