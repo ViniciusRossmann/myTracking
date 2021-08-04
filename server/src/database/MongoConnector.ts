@@ -10,7 +10,7 @@ class MongoConnector {
         MongoClient.connect(uri, (err, client) => {
             if (err) callback(err, null);
             else {
-                callback(null, client.db('rastrearDB'));
+                callback(null, client.db('myTrackingDB'));
             }
         });
     }
@@ -19,7 +19,7 @@ class MongoConnector {
         var query = { email: email };
         this.getDB((err, db) => {
             if (err) callback(err, null);
-            else db.collection("motorista").find(query).toArray(function (err, result) {
+            else db.collection("driver").find(query).toArray(function (err, result) {
                 if (err) callback(err, null);
                 else callback(null, result[0]);
             });
