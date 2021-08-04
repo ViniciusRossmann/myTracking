@@ -1,13 +1,15 @@
 import { Route, BrowserRouter } from 'react-router-dom';
 import React from 'react';
-import Acessar from './pages/Acessar';
+import Login from './pages/Login';
 import Home from './pages/Home';
+import Register from './pages/Register';
 
 const src: React.FC = () => {
   return (
     <BrowserRouter>
       <Route component={Home} path="/" exact />
-      <Route component={Acessar} path="/acessar" exact />
+      <Route component={Login} path="/acessar" exact />
+      <Route component={Register} path="/cadastro" exact />
     </BrowserRouter>
   )
 }

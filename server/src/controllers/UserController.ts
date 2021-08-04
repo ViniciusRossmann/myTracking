@@ -39,8 +39,8 @@ class UserController {
 
   //register a new user
   async register(request: express.Request, response: express.Response) {
-    var { cpf, email, password } = request.body;
-    if (!cpf || !email || !password) return response.json({ status: false, msg: "Dados inválidos" });
+    var { name, email, password } = request.body;
+    if (!name || !email || !password) return response.json({ status: false, msg: "Dados inválidos" });
 
     MongoConnector.getUserByEmail(email, (err, res) => {
       if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados" });
@@ -54,7 +54,7 @@ class UserController {
           }
           else {
             var user: User = {
-              cpf: cpf,
+              name: name,
               email: email,
               password: hash
             }

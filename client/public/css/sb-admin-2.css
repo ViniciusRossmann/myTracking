@@ -47,6 +47,14 @@
   box-sizing: border-box;
 }
 
+.centered {
+  text-align: center;
+}
+
+.btEnter {
+  margin-top: 1rem
+}
+
 html {
   font-family: sans-serif;
   line-height: 1.15;

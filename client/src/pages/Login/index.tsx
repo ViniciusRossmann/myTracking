@@ -1,14 +1,14 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import api from '../../services/api';
+import { useHistory, Link } from 'react-router-dom';
+const requests = require('../../services/requests');
 
-const Acessar: React.FC = () => {
+const Login: React.FC = () => {
     const history = useHistory();
     const [formData, setFormData] = useState({
         login: '',
         password: ''
     });
-    const [loginError, setLoginError] = useState(null);
+    const [loginError, setLoginError] = useState("");
 
     useEffect(() => {
         document.body.setAttribute("class", "bg-gradient-primary");
@@ -24,16 +24,14 @@ const Acessar: React.FC = () => {
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
-        var res = await api.post('user_auth', formData, { headers: { 'Content-Type': 'application/json' } });
-        console.log(res.data);
-        setLoginError(res.data.msg);
-        if (res.data.status) {
-            localStorage.setItem('loggedin', "true");
-            localStorage.setItem('user', formData.login);
-            localStorage.setItem('password', formData.password);
-            localStorage.setItem('token', res.data.token);
-            history.push('/');
+        if (formData.login == "" || formData.password == ""){
+            setLoginError("Informe um email e senha válidos!");
+            return;
         }
+        requests.login(formData.login, formData.password, (status: string, msg: string)=>{
+            if(status) history.push('/');
+            else setLoginError(msg);
+        });
     }
 
     return (
@@ -80,7 +78,8 @@ const Acessar: React.FC = () => {
                                             placeholder='Senha'
                                         />
                                     </div>
-                                    <button type="submit" className="btn btn-primary btn-user btn-block" style={{ marginTop: "1rem" }}>Confirmar</button>
+                                    <div className="centered">Não é cadastrado? <Link to="/cadastro">Cadastre-se</Link></div>
+                                    <button type="submit" className="btn btn-primary btn-user btn-block btEnter">Confirmar</button>
                                 </form>
                             </div>
                         </div>
@@ -91,4 +90,4 @@ const Acessar: React.FC = () => {
     )
 }
 
-export default Acessar;
+export default Login;

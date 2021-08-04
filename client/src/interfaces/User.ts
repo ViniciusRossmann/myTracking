@@ -4,7 +4,4 @@ interface User {
     password: string;
 }
 
-export {
-    User
-    
-}
+export default User;
