@@ -10,7 +10,6 @@ function verifyToken(req, res, next) {
 
   jwt.verify(token, process.env.SECRET, function (err, decoded) {
     if (err) return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
-
     req.body.userId = decoded.id;
     next();
   });

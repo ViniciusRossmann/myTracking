@@ -24,7 +24,7 @@ class UserController {
         bcrypt.compare(password, user.password, function (err, res) {
           if (res) {
             const id = user._id;
-            const token = jwt.sign({ id }, process.env.SECRET, {
+            const token = jwt.sign({ id: id, channel: "user" }, process.env.SECRET, {
               expiresIn: 300 // expires in 5min
             });
             return response.json({ status: true, msg: "Autenticação efetuada", token: token });
