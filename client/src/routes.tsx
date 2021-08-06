@@ -3,6 +3,7 @@ import React from 'react';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Register from './pages/Register';
+import Follow from './pages/Follow';
 
 const src: React.FC = () => {
   return (
@@ -10,6 +11,7 @@ const src: React.FC = () => {
       <Route component={Home} path="/" exact />
       <Route component={Login} path="/acessar" exact />
       <Route component={Register} path="/cadastro" exact />
+      <Route component={Follow} path="/follow" exact />
     </BrowserRouter>
   )
 }

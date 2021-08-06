@@ -48,7 +48,8 @@ class MongoConnector {
     }
 
     async getUserById(id: string, callback) {
-        var query = { _id: id };
+        var o_id = new mongo.ObjectID(id);
+        var query = { _id: o_id };
         this.getDB((err, db) => {
             if (err) callback(err, null);
             else db.collection("user").find(query).toArray(function (err, result) {

@@ -22,7 +22,7 @@ class DriverController {
         bcrypt.compare(password, driver.senha, function (e, r) {
           if (r) {
             const id = driver._id;
-            const token = jwt.sign({ id }, process.env.SECRET, {
+            const token = jwt.sign({ id: id, channel: "driver" }, process.env.SECRET, {
               expiresIn: 300 // expires in 5min
             });
             return response.json({ status: true, msg: "Autenticação efetuada", token: token });

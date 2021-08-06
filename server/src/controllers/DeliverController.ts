@@ -29,16 +29,13 @@ class DeliverController {
     MongoConnector.getUserById(userId, (err, user)=>{
       if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados", data: [] });
       if (!user || user == {}) {
-        return response.json({ status: false, msg: "Não foi possivel identificar o usuário.", data: [] });
+        return response.json({ status: false, msg: "Não foi possivel identificar o usuário. rere", data: [] });
       }
       MongoConnector.getDeliveriesByUser(user.email, (err, data)=>{
         if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados", data: [] });
-        response.json({ status: true, msg: "Lista de entragas do usuário "+userId, data: data });
+        return response.json({ status: true, msg: "Lista de entragas do usuário "+userId, data: data });
       });
     });
-
-
-    return response.json({ status: true, msg: "Viagens do usuario: "+userId , data: [] });
   }
 
 }
