@@ -18,6 +18,7 @@ function verifyToken(req, res, next) {
 export default Router()
   .post("/user_auth", UserController.authentication)
   .post("/user_register", UserController.register)
+  .post("/driver_register", DriverController.register)
   .post("/driver_auth", DriverController.authentication)
   .post("/get_deliveries", verifyToken, DeliverController.getDeliveries)
 

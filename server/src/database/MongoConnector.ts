@@ -2,7 +2,7 @@ var mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
 const uri = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
 
-import { User, Delivery } from '../interfaces'
+import { User, Delivery, Driver } from '../interfaces'
 
 class MongoConnector {
 
@@ -15,7 +15,17 @@ class MongoConnector {
         });
     }
 
-    async getDriver(email: string, callback) {
+    async insertDriver(driver: Driver, callback) {
+        this.getDB((err, db) => {
+            if (err) callback(err, null);
+            else db.collection('driver').save(driver, (err, result) => {
+                if (err) callback(err, null);
+                else callback(null, result);
+            });
+        });
+    }
+
+    async getDriverByEmail(email: string, callback) {
         var query = { email: email };
         this.getDB((err, db) => {
             if (err) callback(err, null);

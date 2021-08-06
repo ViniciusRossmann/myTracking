@@ -1,11 +1,10 @@
 import * as express from 'express';
 import MongoConnector from '../database/MongoConnector';
+import { User } from '../interfaces'
 
 const bcrypt = require('bcrypt');
 require("dotenv-safe").config();
 const jwt = require('jsonwebtoken');
-
-import { User } from '../interfaces'
 
 class UserController {
 

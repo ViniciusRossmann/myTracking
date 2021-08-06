@@ -11,7 +11,7 @@ export default function LoginScreen({ route, navigation }){
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const entrarPressionado = async () => {
+    const enter = async () => {
         if((username == "")||(username==null)||(password=="")||(password==null)){
             Alert.alert("Preecha todos os campos!", "Favor preencher todos os campos para continuar.");
             return;
@@ -55,7 +55,7 @@ export default function LoginScreen({ route, navigation }){
                 <TextInput theme={inputTheme} underlineColor={Colors.colorText} selectionColor={Colors.colorPrimary} value={username} style={style.input} label="Usuário" onChangeText={username => setUsername(username)}/>
                 <View style={style.separator}></View>
                 <TextInput theme={inputTheme} underlineColor={Colors.colorText} selectionColor={Colors.colorPrimary} secureTextEntry={true} style={style.input} label="Senha" value={password} onChangeText={password => setPassword(password)}/>
-                    <TouchableOpacity style={style.btLogin} onPress={entrarPressionado}>
+                    <TouchableOpacity style={style.btLogin} onPress={enter}>
                         {loading ? 
                             (<ActivityIndicator size="large" color="#FFF" />) : 
                             (<Text style={style.txtLogin}>Login</Text>)

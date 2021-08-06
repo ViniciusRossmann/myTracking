@@ -4,6 +4,12 @@ interface User {
     password: string;
 }
 
+interface Driver {
+    name: string;
+    email: string;
+    password: string;
+}
+
 interface Position {
     lat: Number;
     long: Number;
@@ -19,5 +25,6 @@ interface Delivery {
 export {
     User,
     Position,
-    Delivery
+    Delivery,
+    Driver
 }
