@@ -35,6 +35,18 @@ class MongoConnector {
         });
     }
 
+    async getDriverById(id: string, callback) {
+        var o_id = new mongo.ObjectID(id);
+        var query = { _id: o_id };
+        this.getDB((err, db) => {
+            if (err) callback(err, null);
+            else db.collection("driver").find(query).toArray(function (err, result) {
+                if (err) callback(err, null);
+                else callback(null, result[0]);
+            });
+        });
+    }
+
     async insertUser(user: User, callback) {
         this.getDB((err, db) => {
             if (err) callback(err, null);
@@ -79,7 +91,18 @@ class MongoConnector {
     }
 
     async getDeliveriesByUser(email: string, callback) {
-        var query = { email: email };
+        var query = { user_email: email };
+        this.getDB((err, db) => {
+            if (err) callback(err, null);
+            else db.collection("delivery").find(query).toArray(function (err, result) {
+                if (err) callback(err, null);
+                else callback(null, result);
+            });
+        });
+    }
+
+    async getDeliveriesByDriver(email: string, callback) {
+        var query = { driver_email: email };
         this.getDB((err, db) => {
             if (err) callback(err, null);
             else db.collection("delivery").find(query).toArray(function (err, result) {

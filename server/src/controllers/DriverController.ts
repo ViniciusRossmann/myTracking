@@ -16,7 +16,7 @@ class DriverController {
     }
     MongoConnector.getDriverByEmail(login, (err, driver) => {
       if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados", token: null });
-      if (!driver || driver == {}) {
+      if (!driver) {
         return response.json({ status: false, msg: "Email inválido", token: null });
       }
       else {
