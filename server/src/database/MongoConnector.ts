@@ -1,13 +1,12 @@
 var mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
-const uri = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
 
 import { User, Delivery, Driver } from '../interfaces'
 
 class MongoConnector {
 
     async getDB(callback) {
-        MongoClient.connect(uri, (err, client) => {
+        MongoClient.connect(process.env.DB_CONNECT, (err, client) => {
             if (err) callback(err, null);
             else {
                 callback(null, client.db('myTrackingDB'));
