@@ -1,6 +1,6 @@
 import * as express from 'express';
 import MongoConnector from '../database/MongoConnector';
-import { Delivery } from '../interfaces'
+import { Delivery, Position } from '../interfaces'
 
 
 class DeliverController {
@@ -34,6 +34,32 @@ class DeliverController {
           });
         }
       });
+    });
+  }
+
+  async updatePosition(request: express.Request, response: express.Response) {
+    const { userId, position } = request.body;
+    const { deliveryId } = request.params;
+    console.log(position)
+    if (!position || position.lat===undefined || position.long===undefined){
+      return response.json({ status: false, msg: "Dados inválidos."});
+    }
+    MongoConnector.getDeliveryById(deliveryId, (err, delivery)=>{
+      if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados." });
+      if (!delivery) return response.json({ status: false, msg: "Não existe entrega com o id informado." });
+      MongoConnector.getDriverById(userId, (err, driver)=>{
+        if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados." });
+        if (!driver) if (err) return response.json({ status: false, msg: "Erro ao identificar o motorista." });
+        if (driver.email !== delivery.driver_email) response.json({ status: false, msg: "Motorista sem premissão para atualizar essa viagem." });
+        var newPosition: Position = {
+          lat: position.lat,
+          long: position.long
+        }
+        MongoConnector.updateDeliveryPosition(deliveryId, newPosition, (err, res)=>{
+          if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados." });
+          return response.json({ status: true, msg: "Posição atualizada com sucesso." });
+        });
+      })
     });
   }
 

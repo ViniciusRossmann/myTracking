@@ -46,11 +46,11 @@ const Register: React.FC = () => {
 
     function validateData(){
         console.log("valida")
-        if (formData.password != formData.password2){
+        if (formData.password !== formData.password2){
             setLoginError("As senhas informadas não conferem!");
             return false;
         }
-        if (formData.name=="" || formData.email=="" || formData.password==""){
+        if (formData.name==="" || formData.email==="" || formData.password===""){
             setLoginError("Preencha todos os campos!");
             return false;
         }

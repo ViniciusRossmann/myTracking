@@ -24,7 +24,7 @@ class DriverController {
           if (res) {
             const id = driver._id;
             const token = jwt.sign({ id: id, channel: "driver" }, process.env.SECRET, {
-              expiresIn: 300 // expires in 5min
+              expiresIn: '3h' // expires in 3h
             });
             return response.json({ status: true, msg: "Autenticação efetuada", token: token });
           }

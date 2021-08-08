@@ -10,7 +10,8 @@ const routes = {
   ],
   driver: [
     '/get_deliveries',
-    '/new_delivery'
+    '/new_delivery',
+    '/update_position/:deliveryId'
   ]
 }
 
@@ -36,7 +37,7 @@ export default Router()
   .post("/driver_auth", DriverController.authentication)
   .post("/get_deliveries", verifyToken, DeliverController.getDeliveries)
   .post("/new_delivery", verifyToken, DeliverController.newDelivery)
-
+  .post("/update_position/:deliveryId", verifyToken, DeliverController.updatePosition)
 
 
 

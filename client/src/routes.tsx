@@ -11,7 +11,7 @@ const src: React.FC = () => {
       <Route component={Home} path="/" exact />
       <Route component={Login} path="/acessar" exact />
       <Route component={Register} path="/cadastro" exact />
-      <Route component={Follow} path="/follow" exact />
+      <Route component={Follow} path="/follow/:deliveryId" />
     </BrowserRouter>
   )
 }

@@ -1,18 +1,31 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { Redirect, Route } from "react-router";
 import TopBar from '../../components/TopBar';
 import { Map } from "../../components/map";
+import socketIOClient from "socket.io-client";
 
+import url from '../../services/url'
 import Position from "../../interfaces/Position";
 
-const Follow: React.FC = () => {
+type FollowParams = {
+    deliveryId: string;
+};
+
+const Follow: React.FC = (props) => {
+    const { deliveryId } = useParams<FollowParams>();
     const [auth, setAuth]: any = useState(true);
-    const [positions, setPositions] = useState<Position[]>([{lat: -40.356023, long: -20.355142}]);
+    const [positions, setPositions] = useState<Position[]>([]);
 
     useEffect(() => {
         const loggedin = Boolean(localStorage.getItem('loggedin'));
         setAuth(loggedin);
+        if (loggedin){
+            const socket = socketIOClient(url, {query: {delivery: deliveryId}});
+            socket.on("update_location", data => {
+                setPositions([data]);
+            });
+        }
         document.body.setAttribute("class", "");
     }, [])
 

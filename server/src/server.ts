@@ -1,21 +1,16 @@
-
 //server configuration
+import routes from "./routes"
 const express = require('express');
 var cors = require('cors')
 const app = express();
 const server = require('http').createServer(app);
-import routes from "./routes"
-var session = require('express-session');
+
+require('./socketControler')(require("socket.io")(server, { cors: {}}))
 
 app
   .set('port', process.env.PORT || 3001)
   .use(cors({ origin: 'http://localhost:3000', credentials:true }))
   .use(express.json())
-  .use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true,
-  }))
   .use(routes)
 
 server.listen(app.get('port'), () => {

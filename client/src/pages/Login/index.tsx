@@ -24,7 +24,7 @@ const Login: React.FC = () => {
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
-        if (formData.login == "" || formData.password == ""){
+        if (formData.login === "" || formData.password === ""){
             setLoginError("Informe um email e senha válidos!");
             return;
         }

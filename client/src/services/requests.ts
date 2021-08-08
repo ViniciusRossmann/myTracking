@@ -1,4 +1,3 @@
-import { response } from 'express';
 import api from './api';
 import User from '../interfaces/User';
 

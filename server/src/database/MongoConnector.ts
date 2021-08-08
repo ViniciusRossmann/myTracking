@@ -1,7 +1,7 @@
 var mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
-
-import { User, Delivery, Driver } from '../interfaces'
+import EventEmitter from '../events';
+import { User, Delivery, Driver, Position } from '../interfaces'
 
 class MongoConnector {
 
@@ -36,15 +36,19 @@ class MongoConnector {
     }
 
     async getDriverById(id: string, callback) {
-        var o_id = new mongo.ObjectID(id);
-        var query = { _id: o_id };
-        this.getDB((err, db) => {
-            if (err) callback(err, null);
-            else db.collection("driver").find(query).toArray(function (err, result) {
+        try {
+            var o_id = new mongo.ObjectID(id);
+            var query = { _id: o_id };
+            this.getDB((err, db) => {
                 if (err) callback(err, null);
-                else callback(null, result[0]);
+                else db.collection("driver").find(query).toArray(function (err, result) {
+                    if (err) callback(err, null);
+                    else callback(null, result[0]);
+                });
             });
-        });
+        } catch (err) {
+            callback(err, null);
+        }
     }
 
     async insertUser(user: User, callback) {
@@ -69,15 +73,19 @@ class MongoConnector {
     }
 
     async getUserById(id: string, callback) {
-        var o_id = new mongo.ObjectID(id);
-        var query = { _id: o_id };
-        this.getDB((err, db) => {
-            if (err) callback(err, null);
-            else db.collection("user").find(query).toArray(function (err, result) {
+        try {
+            var o_id = new mongo.ObjectID(id);
+            var query = { _id: o_id };
+            this.getDB((err, db) => {
                 if (err) callback(err, null);
-                else callback(null, result[0]);
+                else db.collection("user").find(query).toArray(function (err, result) {
+                    if (err) callback(err, null);
+                    else callback(null, result[0]);
+                });
             });
-        });
+        } catch (err) {
+            callback(err, null);
+        }
     }
 
     async insertDelivery(delivery: Delivery, callback) {
@@ -112,6 +120,48 @@ class MongoConnector {
         });
     }
 
+    async getDeliveryById(id: string, callback) {
+        try {
+            var o_id = new mongo.ObjectID(id);
+            var query = { _id: o_id };
+            this.getDB((err, db) => {
+                if (err) callback(err, null);
+                else db.collection("delivery").find(query).toArray(function (err, result) {
+                    if (err) callback(err, null);
+                    else callback(null, result[0]);
+                });
+            });
+        } catch (err) {
+            callback(err, null);
+        }
+    }
+
+    async updateDeliveryPosition(id: String, position: Position, callback) {
+        try {
+            var o_id = new mongo.ObjectID(id);
+            var query = { _id: o_id };
+            var newvalues = { $set: { position: position } };
+            this.getDB((err, db) => {
+                if (err) callback(err, null);
+                else db.collection("delivery").updateOne(query, newvalues, function (err, result) {
+                    if (err) callback(err, null);
+                    else {
+                        EventEmitter.emit('updateLoc', { id: id, newLocation: position });
+                        callback(null, result);
+                    }
+                });
+            });
+        } catch (err) {
+            callback(err, null);
+        }
+    }
+}
+
+exports.register = function (socket) {
+    EventEmitter.on('updateLoc', function (info) {
+        if (socket.handshake.query.delivery === info.id)
+            socket.emit('update_location', info.newLocation);
+    });
 }
 
 export default new MongoConnector;

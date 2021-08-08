@@ -1,5 +1,4 @@
 import React from "react";
-import { MapBrowserEvent } from "ol";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Feature from "ol/Feature";
@@ -33,7 +32,7 @@ class VectorLayerComponent extends React.PureComponent<TVectorLayerComponentProp
 
   placeMarkers(positions: Position[] | undefined){
     this.source.clear();
-    if (positions == undefined) return;
+    if (positions === undefined) return;
     positions.forEach((position: Position) => {
       const featureToAdd = new Feature({
         geometry: new Point(transform([position.lat, position.long], 'EPSG:4326', 'EPSG:3857')),
@@ -57,7 +56,7 @@ class VectorLayerComponent extends React.PureComponent<TVectorLayerComponentProp
   }
 
   componentDidUpdate(prevProps: TVectorLayerComponentProps) {
-    if (prevProps.positions != this.props.positions) {
+    if (prevProps.positions !== this.props.positions) {
       this.placeMarkers(this.props.positions);
     }
   }
@@ -68,12 +67,10 @@ class VectorLayerComponent extends React.PureComponent<TVectorLayerComponentProp
 }
 
 export const VectorLayerWithContext = (props: TVectorLayerProps) => {
-  console.log(props);
   return (
     <MapContext.Consumer>
       {(mapContext: IMapContext | void) => {
         if (mapContext) {
-          console.log(mapContext);
           return <VectorLayerComponent {...props} map={mapContext.map} />;
         }
       }}
