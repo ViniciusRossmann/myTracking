@@ -1,7 +1,7 @@
+import { User, Delivery, Driver, Position } from '../interfaces'
 var mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
-import EventEmitter from '../events';
-import { User, Delivery, Driver, Position } from '../interfaces'
+const { sendMessage } = require('../socketControler');
 
 class MongoConnector {
 
@@ -146,7 +146,7 @@ class MongoConnector {
                 else db.collection("delivery").updateOne(query, newvalues, function (err, result) {
                     if (err) callback(err, null);
                     else {
-                        EventEmitter.emit('updateLoc', { id: id, newLocation: position });
+                        sendMessage(id, 'update_location', position);
                         callback(null, result);
                     }
                 });
@@ -155,13 +155,6 @@ class MongoConnector {
             callback(err, null);
         }
     }
-}
-
-exports.register = function (socket) {
-    EventEmitter.on('updateLoc', function (info) {
-        if (socket.handshake.query.delivery === info.id)
-            socket.emit('update_location', info.newLocation);
-    });
 }
 
 export default new MongoConnector;

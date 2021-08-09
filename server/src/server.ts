@@ -5,7 +5,8 @@ var cors = require('cors')
 const app = express();
 const server = require('http').createServer(app);
 
-require('./socketControler')(require("socket.io")(server, { cors: {}}))
+const { socketConnection } = require('./socketControler');
+socketConnection(server, { cors: {}});
 
 app
   .set('port', process.env.PORT || 3001)
