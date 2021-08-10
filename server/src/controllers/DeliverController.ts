@@ -63,6 +63,15 @@ class DeliverController {
     });
   }
 
+  async getDelivery(request: express.Request, response: express.Response) {
+    const { id } = request.params;
+    MongoConnector.getDeliveryById(id, (err, delivery)=>{
+      if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados.", data: {} });
+      if (!delivery) return response.json({ status: false, msg: "Não existe entrega com o id informado.", data: {} });
+      return response.json({ status: true, msg: "Consulta efetuada com sucesso", data: delivery });
+    });
+  }
+
   async getDeliveries(request: express.Request, response: express.Response) {
     const { userId, userType } = request.body;
     if (!userId || userId=="" || (userType != 'user' && userType != 'driver')){

@@ -6,12 +6,14 @@ const jwt = require('jsonwebtoken');
 
 const routes = {
   user: [
-    '/get_deliveries'
+    '/get_deliveries',
+    '/delivery/:id'
   ],
   driver: [
     '/get_deliveries',
     '/new_delivery',
-    '/update_position/:deliveryId'
+    '/update_position/:deliveryId',
+    '/delivery/:id'
   ]
 }
 
@@ -38,6 +40,7 @@ export default Router()
   .post("/get_deliveries", verifyToken, DeliverController.getDeliveries)
   .post("/new_delivery", verifyToken, DeliverController.newDelivery)
   .post("/update_position/:deliveryId", verifyToken, DeliverController.updatePosition)
+  .post("/delivery/:id", verifyToken, DeliverController.getDelivery)
 
 
 

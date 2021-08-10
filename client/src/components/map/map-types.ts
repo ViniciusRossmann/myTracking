@@ -1,6 +1,6 @@
 import Map from "ol/Map";
 
-import Position from "../../interfaces/Position";
+import { Position } from "../../interfaces/interfaces";
 
 export type TMapProps = {
   positions?: Position[]

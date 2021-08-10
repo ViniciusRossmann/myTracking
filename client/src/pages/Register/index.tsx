@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
-import User from '../../interfaces/User';
+import * as types from '../../interfaces/interfaces';
 const requests = require('../../services/requests');
 
 const Register: React.FC = () => {
@@ -28,7 +28,7 @@ const Register: React.FC = () => {
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
         if (!validateData()) return;
-        var user: User = {
+        var user: types.User = {
             name: formData.name,
             email: formData.email,
             password: formData.password

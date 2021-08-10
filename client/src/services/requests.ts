@@ -1,26 +1,27 @@
 import api from './api';
-import User from '../interfaces/User';
+import * as types from '../interfaces/interfaces';
+import { AxiosResponse } from 'axios';
 
-async function getNewToken(){
-    const login = localStorage.getItem("user");
-    const password = localStorage.getItem("password");
+async function getNewToken(): Promise<boolean>{
+    const login: string | null = localStorage.getItem("user");
+    const password: string | null = localStorage.getItem("password");
     if (!login || !password){
         localStorage.clear();
         window.location.reload();
         return false;
     }
-    var res = await api.post('user_auth', {login: login, password: password}, {headers:{'Content-Type': 'application/json'}});
-    if (!res.data.status){
+    var res: AxiosResponse = await api.post<types.ApiResponse>('user_auth', {login: login, password: password}, {headers:{'Content-Type': 'application/json'}});
+    if (!res.data?.status){
         localStorage.clear();
         window.location.reload();
     }
-    else localStorage.setItem('token', res.data.token);
+    else localStorage.setItem('token', res.data.token || "");
     return res.data.status;
 }
 
-async function getDeliveries(){
-    var token = localStorage.getItem("token");
-    var res;
+async function getDeliveries(): Promise<types.Delivery[]>{
+    var token: string | null = localStorage.getItem("token");
+    var res: AxiosResponse | null;
     try{
         res = await api.post('get_deliveries', null, { headers: { 'Content-Type': 'application/json', 'x-access-token': token} });
     }
@@ -36,7 +37,29 @@ async function getDeliveries(){
         }
         else res = null;
     }
-    if (res?.data) return res.data;
+    if (res?.data) return res.data.data || [];
+    else return [];
+}
+
+async function getDelivery(id: string): Promise<types.Delivery | null>{
+    var token: string | null = localStorage.getItem("token");
+    var res: AxiosResponse | null;
+    try{
+        res = await api.post('/delivery/'+id, null, { headers: { 'Content-Type': 'application/json', 'x-access-token': token} });
+    }
+    catch{
+        if (await getNewToken()){
+            token = localStorage.getItem("token");
+            try{
+                res = await api.post('/delivery/'+id, null, { headers: { 'Content-Type': 'application/json', 'x-access-token': token} });
+            }
+            catch{
+                res = null;
+            }
+        }
+        else res = null;
+    }
+    if (res?.data) return res.data.data || null;
     else return null;
 }
 
@@ -51,14 +74,14 @@ async function login(user: string, password: string, callback: any){
     callback(res.data.status, res.data.msg);
 }
 
-async function register(user: User, callback: any) {
+async function register(user: types.User, callback: any) {
     var res = await api.post('user_register', user, { headers: { 'Content-Type': 'application/json' } });
     callback(res.data.status, res.data.msg);
 }
 
-//module.exports = { getDeliveries }
 export{
     getDeliveries,
     login,
-    register
+    register,
+    getDelivery
 }
