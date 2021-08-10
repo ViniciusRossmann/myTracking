@@ -11,7 +11,7 @@ import { transform } from "ol/proj";
 import { MapContext } from "../../map";
 import { IMapContext } from "../../map-types";
 import { TVectorLayerProps, TVectorLayerComponentProps } from "./vector-types";
-import { Position } from "../../../../interfaces/interfaces";
+import { Position } from "../../../../types/interfaces";
 
 class VectorLayerComponent extends React.PureComponent<TVectorLayerComponentProps> {
   layer: any;

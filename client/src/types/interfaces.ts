@@ -2,6 +2,7 @@ export interface User {
     name: string;
     email: string;
     password: string;
+    password2?: string;
 }
 
 export interface Position{
@@ -22,4 +23,17 @@ export interface ApiResponse{
     msg: string;
     token?: string;
     data?: any
+}
+
+export interface FollowParams{
+    deliveryId: string;
+};
+
+export interface LoginRequest{
+    login: string;
+    password: string;
+}
+
+export interface TopBarProps{
+    title: string;
 }

@@ -1,13 +1,11 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { Redirect, Route } from "react-router";
+import React, { useState, useEffect } from 'react';
+import { Redirect } from "react-router";
 import TopBar from '../../components/TopBar';
-import * as types from '../../interfaces/interfaces';
+import * as types from '../../types/interfaces';
 const requests = require('../../services/requests');
 
 const Home: React.FC = () => {
-    const [auth, setAuth]: any = useState(null);
-    const [user, setUser] = useState({nome: ""});
+    const [auth, setAuth] = useState<boolean>(true);
     const [items, setItems] = useState<types.Delivery[]>([]);
 
     useEffect(() => {
@@ -22,15 +20,7 @@ const Home: React.FC = () => {
         setItems(data);
     }
 
-    const logout = () => {
-        localStorage.clear();
-        window.location.reload();
-    }
-
-    if (auth == null) return (
-        null
-    )
-    else if (!auth) return (
+    if (!auth) return (
         <Redirect to="/acessar" />
     )
     else return (

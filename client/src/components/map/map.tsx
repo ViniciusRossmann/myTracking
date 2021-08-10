@@ -8,7 +8,7 @@ import { TMapProps, IMapContext, TMapState } from "./map-types";
 import "ol/ol.css";
 import "./map.css";
 
-import { Position } from "../../interfaces/interfaces";
+import { Position } from "../../types/interfaces";
 
 export const MapContext = React.createContext<IMapContext | void>(undefined);
 

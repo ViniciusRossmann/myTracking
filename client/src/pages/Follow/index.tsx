@@ -1,23 +1,17 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
-import { Redirect, Route } from "react-router";
+import React, { useState, useEffect } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import { Redirect } from "react-router";
 import TopBar from '../../components/TopBar';
 import { Map } from "../../components/map";
 import socketIOClient from "socket.io-client";
-
 import url from '../../services/url'
-import * as types from '../../interfaces/interfaces';
-
+import * as types from '../../types/interfaces';
 const requests = require('../../services/requests');
 
-type FollowParams = {
-    deliveryId: string;
-};
-
-const Follow: React.FC = (props) => {
+const Follow: React.FC = () => {
     const history = useHistory();
-    const { deliveryId } = useParams<FollowParams>();
-    const [auth, setAuth]: any = useState(true);
+    const { deliveryId } = useParams<types.FollowParams>();
+    const [auth, setAuth] = useState<boolean>(true);
     const [pageTitle, setPageTitle] = useState<string>("Acompanhar viagem")
     const [positions, setPositions] = useState<types.Position[]>([]);
 
@@ -44,10 +38,7 @@ const Follow: React.FC = (props) => {
         });
     }
 
-    if (auth == null) return (
-        null
-    )
-    else if (!auth) return (
+    if (!auth) return (
         <Redirect to="/acessar" />
     )
     else return (

@@ -1,17 +1,17 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
-import * as types from '../../interfaces/interfaces';
+import * as types from '../../types/interfaces';
 const requests = require('../../services/requests');
 
 const Register: React.FC = () => {
     const history = useHistory();
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<types.User>({
         name: '',
         email: '',
         password: '',
         password2: ''
     });
-    const [loginError, setLoginError] = useState('');
+    const [loginError, setLoginError] = useState<string>('');
 
     useEffect(() => {
         document.body.setAttribute("class", "bg-gradient-primary");
@@ -33,7 +33,7 @@ const Register: React.FC = () => {
             email: formData.email,
             password: formData.password
         }
-        requests.register(user, (status: string, msg: string)=>{
+        requests.register(user, (status: boolean, msg: string)=>{
             if (status){
                 requests.login(user.email, user.password, (status: string, msg: string)=>{
                     if (status) history.push('/');
@@ -44,7 +44,7 @@ const Register: React.FC = () => {
         });
     }
 
-    function validateData(){
+    function validateData(): boolean{
         console.log("valida")
         if (formData.password !== formData.password2){
             setLoginError("As senhas informadas não conferem!");
@@ -61,7 +61,7 @@ const Register: React.FC = () => {
         return true;
     }
 
-    function validateEmail(email: string) {
+    function validateEmail(email: string): boolean{
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
     }

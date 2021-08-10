@@ -1,6 +1,6 @@
 import Map from "ol/Map";
 import Feature from "ol/Feature";
-import { Position } from "../../../../interfaces/interfaces";
+import { Position } from "../../../../types/interfaces";
 
 export type TVectorLayerProps = {
   positions?: Position[];

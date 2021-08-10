@@ -1,14 +1,15 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
+import * as types from '../../types/interfaces';
 const requests = require('../../services/requests');
 
 const Login: React.FC = () => {
     const history = useHistory();
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<types.LoginRequest>({
         login: '',
         password: ''
     });
-    const [loginError, setLoginError] = useState("");
+    const [loginError, setLoginError] = useState<string>("");
 
     useEffect(() => {
         document.body.setAttribute("class", "bg-gradient-primary");
@@ -28,7 +29,7 @@ const Login: React.FC = () => {
             setLoginError("Informe um email e senha válidos!");
             return;
         }
-        requests.login(formData.login, formData.password, (status: string, msg: string)=>{
+        requests.login(formData, (status: string, msg: string)=>{
             if(status) history.push('/');
             else setLoginError(msg);
         });

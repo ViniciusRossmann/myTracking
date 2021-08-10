@@ -1,5 +1,5 @@
 import api from './api';
-import * as types from '../interfaces/interfaces';
+import * as types from '../types/interfaces';
 import { AxiosResponse } from 'axios';
 
 async function getNewToken(): Promise<boolean>{
@@ -63,18 +63,18 @@ async function getDelivery(id: string): Promise<types.Delivery | null>{
     else return null;
 }
 
-async function login(user: string, password: string, callback: any){
-    var res = await api.post('user_auth', { login: user, password: password}, { headers: { 'Content-Type': 'application/json' } });
+async function login(loginReq: types.LoginRequest, callback: (status: boolean, msg: string) => void){
+    var res = await api.post('user_auth', loginReq, { headers: { 'Content-Type': 'application/json' } });
     if (res.data.status) {
         localStorage.setItem('loggedin', "true");
-        localStorage.setItem('user', user);
-        localStorage.setItem('password', password);
+        localStorage.setItem('user', loginReq.login);
+        localStorage.setItem('password', loginReq.password);
         localStorage.setItem('token', res.data.token);
     }
     callback(res.data.status, res.data.msg);
 }
 
-async function register(user: types.User, callback: any) {
+async function register(user: types.User, callback: (status: boolean, msg: string) => void) {
     var res = await api.post('user_register', user, { headers: { 'Content-Type': 'application/json' } });
     callback(res.data.status, res.data.msg);
 }
