@@ -1,21 +1,23 @@
 //server configuration
 import routes from "./routes"
+import connect from "./db/connect";
 const express = require('express');
 var cors = require('cors')
 const app = express();
 const server = require('http').createServer(app);
-
 const { socketConnection } = require('./socketControler');
+
 socketConnection(server, { cors: {}});
 
 app
-  .set('port', process.env.PORT || 3001)
+  .set('port', process.env.port || 3001)
   .use(cors({ origin: 'http://localhost:3000', credentials:true }))
   .use(express.json())
   .use(routes)
 
 server.listen(app.get('port'), () => {
   console.log(`Server listening at port ${app.get('port')}`);
+  connect();
 });
 
 /*const bcrypt = require('bcrypt');
