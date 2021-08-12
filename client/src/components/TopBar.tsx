@@ -6,7 +6,7 @@ const logout = (): void => {
     window.location.reload();
 }
 
-export default function TopBar(props: types.TopBarProps) {
+export default function TopBar(props: types.TopBarProps){
     return (
         <nav className="navbar navbar-expand navbar-light bg-white topbar mb-2 static-top shadow">
             <button id="sidebarToggleTop" className="btn btn-link d-md-none rounded-circle mr-3">

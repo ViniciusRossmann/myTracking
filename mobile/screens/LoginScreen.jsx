@@ -4,7 +4,7 @@ import { View, TouchableOpacity, Text, Alert, StyleSheet, Image, ScrollView, Act
 import { TextInput } from 'react-native-paper';
 import Colors from '../constants/Colors';
 import Layout from '../constants/Layout';
-import Requests from '../network/Requests';
+import Requests from '../services/Requests';
 
 export default function LoginScreen({ route, navigation }){ 
     const [username, setUsername] = useState('');
@@ -39,7 +39,7 @@ export default function LoginScreen({ route, navigation }){
                 }
                 console.log("logado com sucesso");
                 //navigate to home screen
-                //navigation.navigate('Logado', { screen: 'Home' });
+                navigation.navigate('Logado', { screen: 'Home' });
             }
         });
     }

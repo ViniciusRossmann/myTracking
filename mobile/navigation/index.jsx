@@ -3,20 +3,20 @@ import { View, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-
+import CustomDrawerContent from '../components/DrawerContent';
 import LoginScreen from '../screens/LoginScreen';
+import Colors from '../constants/Colors';
 import HomeScreen from '../screens/HomeScreen';
+import LogoffScreen from '../screens/LogoffScreen';
 
-
-//const Drawer = createDrawerNavigator();
+const Drawer = createDrawerNavigator();
 function drawerPrincipal() {
     return (
-        /*<Drawer.Navigator initialRouteName="Home" drawerContent={(props) => <CustomDrawerContent {...props} />}>
-            <Drawer.Screen name="Home" component={NavigationLancamento} />
-            <Drawer.Screen name="Meus Lancamentos" component={MeusLancamentosScreen} />
+        <Drawer.Navigator initialRouteName="Home" drawerContent={(props) => <CustomDrawerContent {...props} />}
+            screenOptions={{ headerStyle: { backgroundColor: Colors.colorStatusBar }, headerTintColor: Colors.colorText }}>
+            <Drawer.Screen name="Home" component={HomeScreen} />
             <Drawer.Screen name="Sair" component={LogoffScreen} />
-        </Drawer.Navigator>*/
-        <HomeScreen />
+        </Drawer.Navigator>
     )
 }
 

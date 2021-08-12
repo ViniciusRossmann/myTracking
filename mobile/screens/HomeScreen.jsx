@@ -1,23 +1,60 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView} from 'react-native';
-
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
+import Requests from '../services/Requests';
 import Colors from '../constants/Colors';
 import Layout from '../constants/Layout';
 
-export default function HomeScreen({ route, navigation }){ 
+export default function HomeScreen({ route, navigation }) {
+    const [items, setItems] = useState([]);
+    const [refreshing, setRefreshing] = useState(true);
+
+    React.useEffect(() => {
+        onRefresh();
+    }, []);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        Requests.getDeliveries((err, res) => {
+            if (err) {
+                console.warn(err);
+                if (err === "Erro na autenticação.") {
+                    navigation.navigate("Sair");
+                }
+            }
+            else setItems(res);
+            setRefreshing(false);
+        });
+    }, []);
+
     return (
         <SafeAreaView style={style.container}>
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Teste</Text>
-        </View>
-        </ScrollView>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
+                        data={items}
+                        renderItem={({ item }) =>
+                            <TouchableOpacity /*onPress={() => seleciona(item)}*/>
+                                <View>
+                                    <Text>{item.description}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        }
+                        keyExtractor={item => item._id}
+                    />
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
 
 //TextInput style
-const inputTheme = { colors: {placeholder: Colors.colorText, text: Colors.colorText, primary: Colors.colorText, background: Colors.colorBackground}};
+const inputTheme = { colors: { placeholder: Colors.colorText, text: Colors.colorText, primary: Colors.colorText, background: Colors.colorBackground } };
 
 //elements width
 const width = Layout.window.width * 0.8;
