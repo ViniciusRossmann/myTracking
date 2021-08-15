@@ -16,6 +16,9 @@ const DeliverySchema = new mongoose.Schema(
         driver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver", required: true },
         status: { type: Number, default: 0 },
         position: { type: Object }
+    },
+    {
+        versionKey: false
     }
 );
 

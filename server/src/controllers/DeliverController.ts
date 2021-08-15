@@ -73,6 +73,8 @@ class DeliverController {
   }
 
   async getDeliveries(request: express.Request, response: express.Response) {
+    // @ts-ignore
+    return response.json({user: request.user});
     const { userId, userType } = request.body;
     if (!userId || userId=="" || (userType != 'user' && userType != 'driver')){
       return response.json({ status: false, msg: "Não foi possivel identificar o usuário." , data: [] });
