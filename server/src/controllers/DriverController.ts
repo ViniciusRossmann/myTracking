@@ -1,72 +1,75 @@
-import * as express from 'express';
-import MongoConnector from '../database/MongoConnector';
-import { Driver } from '../interfaces'
+import { Request, Response } from 'express';
+import Driver from "../models/DriverModel";
+import DriverSession from '../models/DriverSessionModel';
+import { omit } from 'lodash';
+import { validateEmail, getAccessToken } from '../utils';
 
-const bcrypt = require('bcrypt');
+const crypto = require("crypto");
 require("dotenv-safe").config();
 const jwt = require('jsonwebtoken');
 
 class DriverController {
 
   //authenticate driver login and returns an access token
-  async authentication(request: express.Request, response: express.Response) {
-    const { login, password } = request.body;
-    if (login == "" || password == "" || (!login || !password)) {
-      return response.json({ status: false, msg: "Dados insuficientes", token: null });
+  async authentication(req: Request, res: Response) {
+    const { email, password } = req.body;
+    
+    //verify email and password
+    if (!email || !password) return res.status(401).json({error: "Email ou senha inválidos."});
+    const driver = await Driver.findOne({email});
+    if (!driver || !(await driver.comparePassword(password))){
+      return res.status(401).json({error: "Email ou senha inválidos."});
     }
-    MongoConnector.getDriverByEmail(login, (err, driver) => {
-      if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados", token: null });
-      if (!driver) {
-        return response.json({ status: false, msg: "Email inválido", token: null });
-      }
-      else {
-        bcrypt.compare(password, driver.password, function (err, res) {
-          if (res) {
-            const id = driver._id;
-            const token = jwt.sign({ id: id, channel: "driver" }, process.env.SECRET, {
-              expiresIn: '3h' // expires in 3h
-            });
-            return response.json({ status: true, msg: "Autenticação efetuada", token: token });
-          }
-          else {
-            return response.json({ status: false, msg: "Senha incorreta", token: null });
-          }
-        });
-      }
+
+    const basicDriverData = omit(driver.toJSON(), "password");
+
+    //generate access token
+    const accessToken = getAccessToken({...basicDriverData, type: "driver"});
+
+    //generate refresh token in DB
+    const refreshToken = new DriverSession({
+      driver: driver.id,
+      token: crypto.randomBytes(40).toString('hex'),
+      expires: new Date(Date.now() + 365*24*60*60*1000), //expires in 1y
+      userAgent: req.get("user-agent") || ""
     });
+    refreshToken.save();
+
+    //return driver basic data, accessToken and refreshToken
+    return res.json({ driver: basicDriverData, accessToken, refreshToken: refreshToken.token });
+  }
+
+  //revoke refreshToken
+  async logoff(req: Request, res: Response){
+    const token = req.header('x-refresh-token');
+    if (!token) return res.status(400).json({ msg: 'É necessário informar um token' });
+
+    const driverSession = await DriverSession.findOne({token});
+    if (!driverSession){
+      return res.status(400).json({ msg: 'Token inválido' });
+    }
+
+    // @ts-ignore
+    if (driverSession.driver != req.user._id) {
+        return res.status(401).json({ msg: 'Sem permissão' });
+    }
+
+    driverSession.revoked = new Date(Date.now());
+    driverSession.save();
+    return res.status(200).json({ msg: 'Token revogado' });
   }
 
   //register a new driver
-  async register(request: express.Request, response: express.Response) {
-    var { name, email, password } = request.body;
-    if (!name || !email || !password) return response.json({ status: false, msg: "Dados inválidos" });
-
-    MongoConnector.getDriverByEmail(email, (err, res) => {
-      if (err) return response.json({ status: false, msg: "Erro inesperado ao acessar a base de dados" });
-      else if (res) {
-        return response.json({ status: false, msg: "Email em uso" });
+  async register(req: Request, res: Response) {
+    try {
+      if (!validateEmail(req.body.email)){
+        res.status(400).json({error: "Email inválido."});
       }
-      else {
-        bcrypt.hash(password, 10, function (err, hash) {
-          if (err) {
-            response.json({ status: false, msg: "Erro ao salvar motorista" });
-          }
-          else {
-            var driver: Driver = {
-              name: name,
-              email: email,
-              password: hash
-            }
-
-            MongoConnector.insertDriver(driver, (err, res) => {
-              if (err) response.json({ status: false, msg: "Erro ao salvar motorista" });
-              else response.json({ status: true, msg: "Motorista cadastrado" });
-            });
-          }
-        });
-      }
-
-    });
+      await Driver.create(req.body);
+      return res.status(201).json({msg: "Motorista cadastrado com sucesso."});
+    } catch (e) {
+      return res.status(409).json({error: e.message});
+    }
   }
 
 }

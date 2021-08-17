@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import UserSession from './models/UserSessionModel';
+import DriverSession from './models/DriverSessionModel';
 import { omit } from 'lodash';
 
 export function validateEmail(email: string): boolean {
@@ -33,4 +34,12 @@ export async function getNewUserToken(refreshToken: string) {
     const { user } = userSession;
     const basicUserData = omit(user.toJSON(), "password");
     return getAccessToken({...basicUserData, type: "user"});
+}
+
+export async function getNewDriverToken(refreshToken: string) {
+    const driverSession = await DriverSession.findOne({token: refreshToken}).populate('driver');
+    if (!driverSession || !driverSession.isActive) return null;
+    const { driver } = driverSession;
+    const basicDriverData = omit(driver.toJSON(), "password");
+    return getAccessToken({...basicDriverData, type: "driver"});
 }
