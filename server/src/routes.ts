@@ -4,7 +4,6 @@ import DriverController from './controllers/DriverController';
 import UserController from "./controllers/UserController";
 import { Request, Response, NextFunction } from "express"; 
 import { decodeAcessToken, getNewUserToken, getNewDriverToken } from "./utils";
-import { decode } from "jsonwebtoken";
 
 const authorize = (role: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -61,17 +60,14 @@ export default Router()
 
   //delivery routes
   .post("/delivery", authorize('driver'), DeliveryController.newDelivery)
-  .post("/delivery/update-position/:id", authorize('driver'), DeliveryController.updatePosition)
+  .post("/delivery/:id", authorize('driver'), DeliveryController.update)
 
   .get("/user/delivery/:id", authorize('user'), DeliveryController.getDelivery)
   .get("/driver/delivery/:id", authorize('driver'), DeliveryController.getDelivery)
   
   .get("/user/deliveries", authorize('user'), DeliveryController.getDeliveries)
   .get("/driver/deliveries", authorize('driver'), DeliveryController.getDeliveries)
- // .post("/get_deliveries", authorize, DeliverController.getDeliveries)
-  //.post("/new_delivery", verifyToken, DeliverController.newDelivery)
-  //.post("/update_position/:deliveryId", verifyToken, DeliverController.updatePosition)
-  //.post("/delivery/:id", verifyToken, DeliverController.getDelivery)
+
 
 
 

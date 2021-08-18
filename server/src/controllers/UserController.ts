@@ -36,7 +36,7 @@ class UserController {
     refreshToken.save();
 
     //return user basic data, accessToken and refreshToken
-    return res.json({ user: basicUserData, accessToken, refreshToken: refreshToken.token });
+    res.json({ user: basicUserData, accessToken, refreshToken: refreshToken.token });
   }
 
   //revoke refreshToken

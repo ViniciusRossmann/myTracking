@@ -1,4 +1,3 @@
-import React from 'react';
 import * as types from '../types/interfaces';
 
 const logout = (): void => {
@@ -17,7 +16,7 @@ export default function TopBar(props: types.TopBarProps){
                 <li className="nav-item dropdown no-arrow">
                     <a className="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span className="mr-2 d-none d-lg-inline text-gray-600">Nome</span>
+                        <span className="mr-2 d-none d-lg-inline text-gray-600">{ localStorage.getItem("user-name") }</span>
                         <img className="img-profile rounded-circle"
                             src="/img/undraw_profile.svg" />
                     </a>

@@ -12,9 +12,10 @@ export interface Position{
 
 export interface Delivery{
     _id: string;
+    status: number;
     description: string;
-    user_email: string;
-    driver_email: string;
+    user: string;
+    driver: string;
     position?: Position
 }
 
@@ -30,7 +31,7 @@ export interface FollowParams{
 };
 
 export interface LoginRequest{
-    login: string;
+    email: string;
     password: string;
 }
 

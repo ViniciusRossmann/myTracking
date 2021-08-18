@@ -6,7 +6,7 @@ const requests = require('../../services/requests');
 const Login: React.FC = () => {
     const history = useHistory();
     const [formData, setFormData] = useState<types.LoginRequest>({
-        login: '',
+        email: '',
         password: ''
     });
     const [loginError, setLoginError] = useState<string>("");
@@ -25,12 +25,12 @@ const Login: React.FC = () => {
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
-        if (formData.login === "" || formData.password === ""){
+        if (formData.email === "" || formData.password === ""){
             setLoginError("Informe um email e senha válidos!");
             return;
         }
-        requests.login(formData, (status: string, msg: string)=>{
-            if(status) history.push('/');
+        requests.login(formData, (status: number, msg: string)=>{
+            if(status==200) history.push('/');
             else setLoginError(msg);
         });
     }
@@ -62,8 +62,8 @@ const Login: React.FC = () => {
                                     <div className="form-group">
                                         <input
                                             type="text"
-                                            name="login"
-                                            id="login"
+                                            name="email"
+                                            id="email"
                                             className='form-control form-control-user'
                                             onChange={handleInputChange}
                                             placeholder='Email'

@@ -14,12 +14,12 @@ class DeliverController {
     }
   }
 
-  async updatePosition(req: Request, res: Response) {
+  async update(req: Request, res: Response) {
     // @ts-ignore
     const { user } = req;
-    const { position } = req.body;
+    const { position, status } = req.body;
     const { id } = req.params;
-    if (!position || position.lat===undefined || position.long===undefined || !id){
+    if (!status && (!position || position.lat===undefined || position.long===undefined || !id)){
       return res.status(400).json({ error: "Dados inválidos."});
     }
     const delivery = await Delivery.findOne({ _id: id });
@@ -29,13 +29,25 @@ class DeliverController {
     if (delivery.driver!=user._id){
       return res.status(401).json({ error: "Sem permissão."});
     }
-    delivery.position = position;
-    delivery.save();
 
-    //send socket message to clients
-    sendMessage(delivery._id, 'update_location', position);
+    if (position){
+      delivery.position = position;
 
-    return res.status(200).json({ msg: "Localização atualizada com sucesso." });
+      //send socket message to clients
+      sendMessage(delivery._id, 'update_location', position);
+    }
+    if (status){
+      delivery.status = status;
+    }
+
+    try{
+      delivery.save();
+      return res.status(200).json({ msg: "Registro atualizado com sucesso." });
+    }
+    catch(e){
+      return res.status(409).json({error: e.message});
+    }
+    
   }
 
   async getDelivery(req: Request, res: Response) {

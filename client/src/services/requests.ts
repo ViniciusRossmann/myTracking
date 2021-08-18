@@ -2,86 +2,77 @@ import api from './api';
 import * as types from '../types/interfaces';
 import { AxiosResponse } from 'axios';
 
-async function getNewToken(): Promise<boolean>{
-    const login: string | null = localStorage.getItem("user");
-    const password: string | null = localStorage.getItem("password");
-    if (!login || !password){
-        localStorage.clear();
-        window.location.reload();
-        return false;
+function getHeaders(withAuth: boolean){
+    if (!withAuth) return { headers: { 'Content-Type': 'application/json' }};
+    return {
+        headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': localStorage.getItem('x-access-token'),
+            'x-refresh-token': localStorage.getItem('x-refresh-token')
+        }
     }
-    var res: AxiosResponse = await api.post<types.ApiResponse>('user_auth', {login: login, password: password}, {headers:{'Content-Type': 'application/json'}});
-    if (!res.data?.status){
-        localStorage.clear();
-        window.location.reload();
+}
+
+async function verifyAuthentication(res: AxiosResponse){
+    if (res.status == 401){ //unauthorized
+        return exit();
     }
-    else localStorage.setItem('token', res.data.token || "");
-    return res.data.status;
+
+    const newToken = res.headers['x-access-token'];
+    if (newToken){
+        console.log("novo token obtido");
+        localStorage.setItem('x-access-token', newToken);
+    }
+}
+
+function exit() {
+    localStorage.clear();
+    window.location.reload();
+}
+
+async function post(route: string, data: Object, withAuth: boolean): Promise<AxiosResponse> {
+    var res; 
+    try{
+        res = await api.post(route, data, getHeaders(withAuth));
+    } catch(error){
+        res = error.response;
+    }
+    if (withAuth) verifyAuthentication(res);
+    return res;
+}
+
+async function get(route: string, withAuth: boolean): Promise<AxiosResponse> {
+    var res; 
+    try{
+        res = await api.get(route, getHeaders(withAuth));
+    } catch(error){
+        res = error.response;
+    }
+    if (withAuth) verifyAuthentication(res);
+    return res;
+}
+
+
+async function login(loginReq: types.LoginRequest, callback: (status: number, msg: string) => void){
+    const res = await post('user/authentication', loginReq, false);
+
+    if (res.status == 200){
+        localStorage.setItem("loggedin", "true");
+        localStorage.setItem("x-access-token", res.data.accessToken);
+        localStorage.setItem("x-refresh-token", res.data.refreshToken);
+        localStorage.setItem("user-name", res.data.user.name);
+    }
+
+    callback(res.status, res.data.error || "Erro ao tentar efetuar login.");
 }
 
 async function getDeliveries(): Promise<types.Delivery[]>{
-    var token: string | null = localStorage.getItem("token");
-    var res: AxiosResponse | null;
-    try{
-        res = await api.post('get_deliveries', null, { headers: { 'Content-Type': 'application/json', 'x-access-token': token} });
-    }
-    catch{
-        if (await getNewToken()){
-            token = localStorage.getItem("token");
-            try{
-                res = await api.post('get_deliveries', null, { headers: { 'Content-Type': 'application/json', 'x-access-token': token} });
-            }
-            catch{
-                res = null;
-            }
-        }
-        else res = null;
-    }
-    if (res?.data) return res.data.data || [];
-    else return [];
+    const res = await get('/user/deliveries', true);
+    return res.data || [];
 }
 
-async function getDelivery(id: string): Promise<types.Delivery | null>{
-    var token: string | null = localStorage.getItem("token");
-    var res: AxiosResponse | null;
-    try{
-        res = await api.post('/delivery/'+id, null, { headers: { 'Content-Type': 'application/json', 'x-access-token': token} });
-    }
-    catch{
-        if (await getNewToken()){
-            token = localStorage.getItem("token");
-            try{
-                res = await api.post('/delivery/'+id, null, { headers: { 'Content-Type': 'application/json', 'x-access-token': token} });
-            }
-            catch{
-                res = null;
-            }
-        }
-        else res = null;
-    }
-    if (res?.data) return res.data.data || null;
-    else return null;
-}
-
-async function login(loginReq: types.LoginRequest, callback: (status: boolean, msg: string) => void){
-    var res = await api.post('user_auth', loginReq, { headers: { 'Content-Type': 'application/json' } });
-    if (res.data.status) {
-        localStorage.setItem('loggedin', "true");
-        localStorage.setItem('user', loginReq.login);
-        localStorage.setItem('password', loginReq.password);
-        localStorage.setItem('token', res.data.token);
-    }
-    callback(res.data.status, res.data.msg);
-}
-
-async function register(user: types.User, callback: (status: boolean, msg: string) => void) {
-    var res = await api.post('user_register', user, { headers: { 'Content-Type': 'application/json' } });
-    callback(res.data.status, res.data.msg);
-}
 
 export{
-    getDeliveries,
     login,
-    register,
-    getDelivery
+    getDeliveries
 }
