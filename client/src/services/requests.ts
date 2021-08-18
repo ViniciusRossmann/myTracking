@@ -15,7 +15,8 @@ function getHeaders(withAuth: boolean){
 
 async function verifyAuthentication(res: AxiosResponse){
     if (res.status == 401){ //unauthorized
-        return exit();
+        exit();
+        return;
     }
 
     const newToken = res.headers['x-access-token'];
@@ -66,13 +67,20 @@ async function login(loginReq: types.LoginRequest, callback: (status: number, ms
     callback(res.status, res.data.error || "Erro ao tentar efetuar login.");
 }
 
+async function logout(){
+    await get('/user/logoff', true);
+}
+
 async function getDeliveries(): Promise<types.Delivery[]>{
     const res = await get('/user/deliveries', true);
+    console.log(res.data)
+    if (res.data.msg) return [];
     return res.data || [];
 }
 
 
 export{
     login,
+    logout,
     getDeliveries
 }

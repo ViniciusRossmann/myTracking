@@ -40,10 +40,10 @@ const authorize = (role: string) => {
         return next();
       }
   
-      return res.status(500).json({ msg: 'Failed to authenticate token.' });
+      return res.status(401).json({ msg: 'Failed to authenticate token.' });
     }
   
-    return res.status(500).json({ msg: 'Failed to authenticate token.' });
+    return res.status(401).json({ msg: 'Failed to authenticate token.' });
   }
 }
 

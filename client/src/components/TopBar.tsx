@@ -1,6 +1,8 @@
 import * as types from '../types/interfaces';
+const requests = require('../services/requests');
 
-const logout = (): void => {
+const logout = async () => {
+    await requests.logout();
     localStorage.clear();
     window.location.reload();
 }
