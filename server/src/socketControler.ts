@@ -3,7 +3,7 @@ exports.socketConnection = (server, props) => {
   io = require('socket.io')(server, props);
   io.on('connection', (socket) => {
     let deliveryId: string = socket.handshake.query.delivery;
-    console.log("New client connected: "+deliveryId);
+    console.log("New client connected to delivery: "+deliveryId);
     socket.join(deliveryId);
         
     socket.on("disconnect", () => {

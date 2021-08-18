@@ -73,14 +73,20 @@ async function logout(){
 
 async function getDeliveries(): Promise<types.Delivery[]>{
     const res = await get('/user/deliveries', true);
-    console.log(res.data)
     if (res.data.msg) return [];
     return res.data || [];
+}
+
+async function getDelivery(id: string): Promise<types.Delivery | null>{
+    const res = await get(`/user/delivery/${id}`, true);
+    if (res.data.msg) return null;
+    return res.data || null;
 }
 
 
 export{
     login,
     logout,
-    getDeliveries
+    getDeliveries,
+    getDelivery
 }

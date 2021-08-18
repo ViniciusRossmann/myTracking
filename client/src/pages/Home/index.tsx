@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from "react-router";
+import { Link } from 'react-router-dom';
 import TopBar from '../../components/TopBar';
 import * as types from '../../types/interfaces';
 const requests = require('../../services/requests');
@@ -31,7 +32,7 @@ const Home: React.FC = () => {
                 <div className="container-fluid">
                     <ul>
                         {items.map((item: types.Delivery) => 
-                            <div key={item._id}>{item._id} | {item.description}</div>
+                            <Link to={'/follow/'+item._id}><div key={item._id}>{item._id} | {item.description}</div></Link>
                         )}
                     </ul>
                 </div>
