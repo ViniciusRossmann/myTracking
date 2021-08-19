@@ -54,7 +54,13 @@ class DeliverController {
       // @ts-ignore
       const { user } = req;
       const { id } = req.params;
-      const delivery = await Delivery.findOne({ _id: id });
+      var delivery;
+      if (user.type=='user'){
+        delivery = await Delivery.findOne({ _id: id });
+      }
+      else{
+        delivery = await Delivery.findOne({ _id: id }).populate('user', '_id name email');
+      }
       if (!delivery) {
         return res.status(400).json({ error: "Código de viagem inválido." });
       }
@@ -76,7 +82,7 @@ class DeliverController {
       deliveries = await Delivery.find({ user: user._id });
     }
     else { //driver
-      deliveries = await Delivery.find({ driver: user._id });
+      deliveries = await Delivery.find({ driver: user._id }).populate('user', '_id name email');
     }
     return res.status(200).json(deliveries);
   }
