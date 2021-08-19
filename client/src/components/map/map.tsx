@@ -8,11 +8,11 @@ import { TMapProps, IMapContext, TMapState } from "./map-types";
 import "ol/ol.css";
 import "./map.css";
 
-import { Position } from "../../types/interfaces";
+import { Location } from "../../types/interfaces";
 
 export const MapContext = React.createContext<IMapContext | void>(undefined);
 
-export class MapComponent extends React.PureComponent<TMapProps, TMapState, Position > {
+export class MapComponent extends React.PureComponent<TMapProps, TMapState, Location > {
   private mapDivRef: React.RefObject<HTMLDivElement>;
   state: TMapState = {};
 

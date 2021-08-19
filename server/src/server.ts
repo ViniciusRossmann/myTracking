@@ -11,7 +11,7 @@ socketConnection(server, { cors: {}});
 
 app
   .set('port', process.env.port || 3001)
-  .use(cors({ origin: 'http://localhost:3000', credentials:true }))
+  .use(cors({ origin: '*', credentials:true }))
   .use(express.json())
   .use(routes)
 

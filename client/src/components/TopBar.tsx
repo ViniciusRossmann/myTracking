@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import * as types from '../types/interfaces';
 const requests = require('../services/requests');
 
@@ -10,9 +11,11 @@ const logout = async () => {
 export default function TopBar(props: types.TopBarProps){
     return (
         <nav className="navbar navbar-expand navbar-light bg-white topbar mb-2 static-top shadow">
-            <button id="sidebarToggleTop" className="btn btn-link d-md-none rounded-circle mr-3">
-                <i className="fa fa-bars"></i>
-            </button>
+            <div className="rounded-circle mr-3">
+                <Link to="/">
+                    <img height="60" src="/img/logo.png" />
+                </Link>
+            </div>
             <h1 className="h3 mb-0 text-gray-800">{props.title}</h1>
             <ul className="navbar-nav ml-auto">
                 <li className="nav-item dropdown no-arrow">

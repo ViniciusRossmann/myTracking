@@ -13,7 +13,7 @@ const Follow: React.FC = () => {
     const { deliveryId } = useParams<types.FollowParams>();
     const [auth, setAuth] = useState<boolean>(true);
     const [pageTitle, setPageTitle] = useState<string>("Acompanhar viagem")
-    const [positions, setPositions] = useState<types.Position[]>([]);
+    const [positions, setPositions] = useState<types.Location[]>([]);
 
     useEffect(() => {
         const loggedin = Boolean(localStorage.getItem('loggedin'));
@@ -31,7 +31,7 @@ const Follow: React.FC = () => {
             return;
         }
         setPageTitle(delivery.description);
-        if (delivery.position) setPositions([delivery.position]);
+        if (delivery.location) setPositions([delivery.location]);
         const socket = socketIOClient(url, {query: {delivery: deliveryId}});
         socket.on("update_location", data => {
             setPositions([data]);

@@ -57,14 +57,14 @@ async function get(route: string, withAuth: boolean): Promise<AxiosResponse> {
 async function login(loginReq: types.LoginRequest, callback: (status: number, msg: string) => void){
     const res = await post('user/authentication', loginReq, false);
 
-    if (res.status == 200){
+    if (res?.status == 200){
         localStorage.setItem("loggedin", "true");
         localStorage.setItem("x-access-token", res.data.accessToken);
         localStorage.setItem("x-refresh-token", res.data.refreshToken);
         localStorage.setItem("user-name", res.data.user.name);
     }
 
-    callback(res.status, res.data.error || "Erro ao tentar efetuar login.");
+    callback(res?.status || 0, res?.data.error || "Erro ao tentar efetuar login.");
 }
 
 async function logout(){
@@ -73,14 +73,14 @@ async function logout(){
 
 async function getDeliveries(): Promise<types.Delivery[]>{
     const res = await get('/user/deliveries', true);
-    if (res.data.msg) return [];
-    return res.data || [];
+    if (res?.data.msg) return [];
+    return res?.data || [];
 }
 
 async function getDelivery(id: string): Promise<types.Delivery | null>{
     const res = await get(`/user/delivery/${id}`, true);
-    if (res.data.msg) return null;
-    return res.data || null;
+    if (res?.data.msg) return null;
+    return res?.data || null;
 }
 
 

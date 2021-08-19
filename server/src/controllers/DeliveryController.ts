@@ -18,9 +18,9 @@ class DeliverController {
     try {
       // @ts-ignore
       const { user } = req;
-      const { position, status } = req.body;
+      const { location, status } = req.body;
       const { id } = req.params;
-      if (!status && (!position || position.lat === undefined || position.long === undefined || !id)) {
+      if (!status && !location) {
         return res.status(400).json({ error: "Dados inválidos." });
       }
       const delivery = await Delivery.findOne({ _id: id });
@@ -31,10 +31,10 @@ class DeliverController {
         return res.status(401).json({ error: "Sem permissão." });
       }
 
-      if (position) {
-        delivery.position = position;
+      if (location) {
+        delivery.location = location;
         //send socket message to clients
-        sendMessage(String(delivery._id), 'update_location', position);
+        sendMessage(String(delivery._id), 'update_location', location);
       }
       if (status) {
         delivery.status = status;
@@ -42,6 +42,7 @@ class DeliverController {
 
 
       delivery.save();
+      console.log("Viagem atualizada: "+Date.now());
       return res.status(200).json({ msg: "Registro atualizado com sucesso." });
     }
     catch (e) {

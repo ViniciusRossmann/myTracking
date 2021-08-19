@@ -11,7 +11,7 @@ import { transform } from "ol/proj";
 import { MapContext } from "../../map";
 import { IMapContext } from "../../map-types";
 import { TVectorLayerProps, TVectorLayerComponentProps } from "./vector-types";
-import { Position } from "../../../../types/interfaces";
+import { Location } from "../../../../types/interfaces";
 
 class VectorLayerComponent extends React.PureComponent<TVectorLayerComponentProps> {
   layer: any;
@@ -30,12 +30,12 @@ class VectorLayerComponent extends React.PureComponent<TVectorLayerComponentProp
     this.placeMarkers(this.props.positions);
   }
 
-  placeMarkers(positions: Position[] | undefined){
+  placeMarkers(positions: Location[] | undefined){
     this.source.clear();
     if (positions === undefined) return;
-    positions.forEach((position: Position) => {
+    positions.forEach((position: Location) => {
       const featureToAdd = new Feature({
-        geometry: new Point(transform([position.lat, position.long], 'EPSG:4326', 'EPSG:3857')),
+        geometry: new Point(transform([position.coords.longitude, position.coords.latitude], 'EPSG:4326', 'EPSG:3857')),
       });
       const style = new Style({
         image: new Circle({
