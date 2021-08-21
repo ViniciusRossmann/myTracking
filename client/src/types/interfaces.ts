@@ -21,12 +21,18 @@ export interface Location{
     timestamp: number,
 }
 
+interface Driver{
+    _id: string;
+    name: string;
+    email: string;
+}
+
 export interface Delivery{
     _id: string;
     status: number;
     description: string;
     user: string;
-    driver: string;
+    driver: Driver;
     location?: Location
 }
 
@@ -48,4 +54,8 @@ export interface LoginRequest{
 
 export interface TopBarProps{
     title: string;
+}
+
+export interface DeliveryContainerProps{
+    delivery: Delivery;
 }

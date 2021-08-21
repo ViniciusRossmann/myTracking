@@ -13,13 +13,13 @@ export default function TopBar(props: types.TopBarProps){
         <nav className="navbar navbar-expand navbar-light bg-white topbar mb-2 static-top shadow">
             <div className="rounded-circle mr-3">
                 <Link to="/">
-                    <img height="60" src="/img/logo.png" />
+                    <img alt="" height="60" src="/img/logo.png" />
                 </Link>
             </div>
             <h1 className="h3 mb-0 text-gray-800">{props.title}</h1>
             <ul className="navbar-nav ml-auto">
                 <li className="nav-item dropdown no-arrow">
-                    <a className="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                    <a className="nav-link dropdown-toggle" id="userDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span className="mr-2 d-none d-lg-inline text-gray-600">{ localStorage.getItem("user-name") }</span>
                         <img className="img-profile rounded-circle"

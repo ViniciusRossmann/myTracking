@@ -5,6 +5,8 @@ import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 import { VectorLayer } from "./layers";
 import { TMapProps, IMapContext, TMapState } from "./map-types";
+import Point from "ol/geom/Point";
+import { transform } from "ol/proj";
 import "ol/ol.css";
 import "./map.css";
 
@@ -12,7 +14,7 @@ import { Location } from "../../types/interfaces";
 
 export const MapContext = React.createContext<IMapContext | void>(undefined);
 
-export class MapComponent extends React.PureComponent<TMapProps, TMapState, Location > {
+export class MapComponent extends React.PureComponent<TMapProps, TMapState > {
   private mapDivRef: React.RefObject<HTMLDivElement>;
   state: TMapState = {};
 
@@ -36,8 +38,8 @@ export class MapComponent extends React.PureComponent<TMapProps, TMapState, Loca
         }),
       ],
       view: new View({
-        center: [0, 0],
-        zoom: 3,
+        center: transform([this.props.center?.longitude || 0, this.props.center?.latitude || 0], 'EPSG:4326', 'EPSG:3857'),
+        zoom: this.props.zoom || 3,
       }),
     });
 
@@ -47,6 +49,14 @@ export class MapComponent extends React.PureComponent<TMapProps, TMapState, Loca
     });
   }
 
+  componentDidUpdate(prevProps: TMapProps) {
+    if (prevProps.center !== this.props.center) {
+      this.state.mapContext?.map.getView().setCenter(transform([this.props.center?.longitude || 0, this.props.center?.latitude || 0], 'EPSG:4326', 'EPSG:3857'));
+    }
+    if (prevProps.zoom !== this.props.zoom) {
+      this.state.mapContext?.map.getView().setZoom(this.props.zoom || 3);
+    }
+  }
 
   render() {
     return (

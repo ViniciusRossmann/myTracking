@@ -6,6 +6,7 @@ import { Map } from "../../components/map";
 import socketIOClient from "socket.io-client";
 import url from '../../services/url'
 import * as types from '../../types/interfaces';
+import { coord } from "../../components/map/map-types";
 const requests = require('../../services/requests');
 
 const Follow: React.FC = () => {
@@ -14,6 +15,8 @@ const Follow: React.FC = () => {
     const [auth, setAuth] = useState<boolean>(true);
     const [pageTitle, setPageTitle] = useState<string>("Acompanhar viagem")
     const [positions, setPositions] = useState<types.Location[]>([]);
+    const [mapZoom, setMapZoom] = useState<number>(13);
+    const [mapCenter, setMapCenter] = useState<coord>();
 
     useEffect(() => {
         const loggedin = Boolean(localStorage.getItem('loggedin'));
@@ -31,9 +34,15 @@ const Follow: React.FC = () => {
             return;
         }
         setPageTitle(delivery.description);
-        if (delivery.location) setPositions([delivery.location]);
+        if (delivery.location) {
+            setMapCenter({latitude: delivery.location.coords.latitude, longitude: delivery.location.coords.longitude});
+            setPositions([delivery.location]);
+        }
         const socket = socketIOClient(url, {query: {delivery: deliveryId}});
         socket.on("update_location", data => {
+            if(positions.length===0){
+                setMapCenter({latitude: data.coords.latitude, longitude: data.coords.longitude});
+            }
             setPositions([data]);
         });
     }
@@ -46,9 +55,11 @@ const Follow: React.FC = () => {
             <div id="content">
                 <TopBar title={ pageTitle } />
 
-                <div className="container-fluid" style={{width: '550px'}}>
-                    <Map positions={positions}/>
-                </div>
+        
+        
+                    <Map zoom={mapZoom} center={mapCenter} positions={positions}/>
+            
+            
 
             </div>
         </div>

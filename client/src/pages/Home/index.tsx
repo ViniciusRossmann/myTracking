@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Redirect } from "react-router";
 import { Link } from 'react-router-dom';
 import TopBar from '../../components/TopBar';
+import DeliveryContainer from '../../components/DeliveryContainer';
 import * as types from '../../types/interfaces';
 const requests = require('../../services/requests');
 
@@ -12,7 +13,7 @@ const Home: React.FC = () => {
     useEffect(() => {
         const loggedin = Boolean(localStorage.getItem('loggedin'));
         setAuth(loggedin);
-        document.body.setAttribute("class", "");
+        //document.body.setAttribute("class", "");
         if (loggedin) loadDeliveries();
     }, [])
 
@@ -30,9 +31,13 @@ const Home: React.FC = () => {
                 <TopBar title="myTracking" />
 
                 <div className="container-fluid">
-                    <ul>
-                        {items.map((item: types.Delivery) => 
-                            <Link to={'/follow/'+item._id}><div key={item._id}>{item._id} | {item.description}</div></Link>
+                    <div className="d-sm-flex align-items-center justify-content-between mb-2">
+                        <h1 className="h3 mb-0 text-gray-800">Seus rastreamentos:</h1>
+                    </div>
+
+                    <ul className="row" style={{padding: '0px'}}>
+                        {items.map((item: types.Delivery) =>
+                            <DeliveryContainer delivery={item} />
                         )}
                     </ul>
                 </div>

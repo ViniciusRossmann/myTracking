@@ -39,10 +39,8 @@ class DeliverController {
       if (status) {
         delivery.status = status;
       }
-
-
       delivery.save();
-      console.log("Viagem atualizada: "+Date.now());
+
       return res.status(200).json({ msg: "Registro atualizado com sucesso." });
     }
     catch (e) {
@@ -57,7 +55,7 @@ class DeliverController {
       const { id } = req.params;
       var delivery;
       if (user.type=='user'){
-        delivery = await Delivery.findOne({ _id: id });
+        delivery = await Delivery.findOne({ _id: id }).populate('driver', '_id name email');
       }
       else{
         delivery = await Delivery.findOne({ _id: id }).populate('user', '_id name email');
@@ -80,7 +78,7 @@ class DeliverController {
     const { user } = req;
     var deliveries;
     if (user.type === 'user') {
-      deliveries = await Delivery.find({ user: user._id });
+      deliveries = await Delivery.find({ user: user._id }).populate('driver', '_id name email');
     }
     else { //driver
       deliveries = await Delivery.find({ driver: user._id }).populate('user', '_id name email');
