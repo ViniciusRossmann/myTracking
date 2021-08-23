@@ -52,6 +52,7 @@ export default Router()
   .post("/user/register", UserController.register)
   .post("/user/authentication", UserController.authentication)
   .get("/user/logoff", authorize('user'), UserController.logoff)
+  .get("/users", authorize('driver'), UserController.getUsers)
 
   //driver routes
   .post("/driver/register", DriverController.register)

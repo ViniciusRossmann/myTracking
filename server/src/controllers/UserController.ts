@@ -72,6 +72,12 @@ class UserController {
     }
   }
 
+  //return all registered users
+  async getUsers(req: Request, res: Response) {
+    const users = await User.find({ }).select('_id name email');
+    res.json(users);
+  }
+
 }
 
 export default new UserController;
