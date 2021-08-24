@@ -1,6 +1,7 @@
 import api from './api';
 import * as types from '../types/interfaces';
 import { AxiosResponse } from 'axios';
+import { rest } from 'lodash';
 
 function getHeaders(withAuth: boolean){
     if (!withAuth) return { headers: { 'Content-Type': 'application/json' }};
@@ -83,10 +84,15 @@ async function getDelivery(id: string): Promise<types.Delivery | null>{
     return res?.data || null;
 }
 
+async function register(user: types.User, callback: (status: number, msg: string) => void){
+    const res = await post('/user/register', user, false);
+    callback(res?.status || 0, res?.data.error || "Erro ao tentar cadastrar usuário.");
+}
 
 export{
     login,
     logout,
     getDeliveries,
-    getDelivery
+    getDelivery,
+    register
 }

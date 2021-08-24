@@ -33,11 +33,11 @@ const Register: React.FC = () => {
             email: formData.email,
             password: formData.password
         }
-        requests.register(user, (status: boolean, msg: string)=>{
-            if (status){
-                requests.login(user.email, user.password, (status: string, msg: string)=>{
-                    if (status) history.push('/');
-                    else history.push('/acessar');
+        requests.register(user, (status: number, msg: string)=>{
+            if (status == 201){ //created
+                requests.login({email: user.email, password: user.password}, (status: number, msg: string)=>{
+                    if(status==200) history.push('/');
+                    else setLoginError(msg);
                 });
             }
             else setLoginError(msg);
