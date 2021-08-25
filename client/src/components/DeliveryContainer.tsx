@@ -24,7 +24,7 @@ export default function DeliveryContainer(props: types.DeliveryContainerProps) {
                             <span className="icon text-white-50">
                                 <i className="fas fa-map-marker-alt"></i>
                             </span>
-                            <span className="text">Acompanhar no mapa</span>
+                            <span className="text">Acompanhar</span>
                         </Link>
                     ) : (null)
                     }

@@ -11,9 +11,9 @@ const Home: React.FC = () => {
     const [items, setItems] = useState<types.Delivery[]>([]);
 
     useEffect(() => {
+        document.body.setAttribute("class", "");
         const loggedin = Boolean(localStorage.getItem('loggedin'));
         setAuth(loggedin);
-        //document.body.setAttribute("class", "");
         if (loggedin) loadDeliveries();
     }, [])
 

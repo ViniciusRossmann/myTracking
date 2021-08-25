@@ -19,12 +19,12 @@ const Follow: React.FC = () => {
     const [mapCenter, setMapCenter] = useState<coord>();
 
     useEffect(() => {
+        document.body.setAttribute("class", "");
         const loggedin = Boolean(localStorage.getItem('loggedin'));
         setAuth(loggedin);
         if (loggedin){
             loadDelivery();
         }
-        document.body.setAttribute("class", "");
     }, [])
 
     const loadDelivery = async () =>{

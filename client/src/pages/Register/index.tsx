@@ -45,7 +45,6 @@ const Register: React.FC = () => {
     }
 
     function validateData(): boolean{
-        console.log("valida")
         if (formData.password !== formData.password2){
             setLoginError("As senhas informadas não conferem!");
             return false;
