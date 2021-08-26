@@ -19,6 +19,7 @@ const Follow: React.FC = () => {
     const [mapZoom, setMapZoom] = useState<number>(16);
     const [mapCenter, setMapCenter] = useState<coord>();
     const [mapHeight, setMapHeight] = useState<number>(200);
+    const [socket, setSocket] = useState<any>();
 
     useEffect(() => {
         document.body.setAttribute("class", "");
@@ -43,12 +44,19 @@ const Follow: React.FC = () => {
             setPositions([delivery.location]);
         }
         const socket = socketIOClient(url, {query: {delivery: deliveryId}});
+        setSocket(socket);
         socket.on("update_location", data => {
             if(positions.length===0){
                 setMapCenter({latitude: data.coords.latitude, longitude: data.coords.longitude});
             }
             setPositions([data]);
         });
+    }
+
+    const onLeave = () => {
+        if (socket){
+            socket.disconnect();
+        }
     }
 
     if (!auth) return (
@@ -58,7 +66,7 @@ const Follow: React.FC = () => {
         <div id="wrapper">
             <div id="content-wrapper" className="d-flex flex-column">
                 <div id="content">
-                    <TopBar title={ pageTitle } />
+                    <TopBar title={pageTitle} onNavigateHome={onLeave} />
                     <div className="container-fluid">
                         <Map zoom={mapZoom} center={mapCenter} positions={positions} height={mapHeight} />
                     </div>

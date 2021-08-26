@@ -2,17 +2,24 @@ import { Link } from 'react-router-dom';
 import * as types from '../types/interfaces';
 const requests = require('../services/requests');
 
-const logout = async () => {
-    await requests.logout();
-    localStorage.clear();
-    window.location.reload();
-}
-
 export default function TopBar(props: types.TopBarProps){
+
+    const logout = async () => {
+        await requests.logout();
+        localStorage.clear();
+        window.location.reload();
+    }
+    
+    const onNavigateHome = () => {
+        if (props.onNavigateHome){
+            props.onNavigateHome();
+        }
+    }    
+
     return (
         <nav className="navbar navbar-expand navbar-light bg-white topbar mb-2 static-top shadow">
             <div className="rounded-circle mr-3">
-                <Link to="/">
+                <Link to="/" onClick={onNavigateHome}>
                     <img alt="" height="60" src="/img/logo.png" />
                 </Link>
             </div>

@@ -54,6 +54,7 @@ export interface LoginRequest{
 
 export interface TopBarProps{
     title: string;
+    onNavigateHome?: Function;
 }
 
 export interface DeliveryContainerProps{
