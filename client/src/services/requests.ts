@@ -80,7 +80,7 @@ async function getDeliveries(): Promise<types.Delivery[]>{
 
 async function getDelivery(id: string): Promise<types.Delivery | null>{
     const res = await get(`/user/delivery/${id}`, true);
-    if (res?.data.msg) return null;
+    if (res?.data.error) return null;
     return res?.data || null;
 }
 

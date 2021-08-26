@@ -10,7 +10,8 @@ export type coord = {
 export type TMapProps = {
   positions?: Location[],
   zoom?: number,
-  center?: coord
+  center?: coord,
+  height: number
 };
 
 export type TMapState = {

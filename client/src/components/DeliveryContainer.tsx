@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import * as types from '../types/interfaces';
-const requests = require('../services/requests');
 
 const descStatus: { [key: number]: string } = {
     0: 'Não iniciada',
@@ -18,20 +17,23 @@ export default function DeliveryContainer(props: types.DeliveryContainerProps) {
                 </div>
                 <div className="card-body">
                     <p>Entregador: {props.delivery.driver.name}</p>
-                    <p>Status: {descStatus[props.delivery.status]}</p>
-                    {props.delivery.status === 1 ? (
-                        <Link to={`/follow/${props.delivery._id}`} className="btn btn-info btn-icon-split" >
-                            <span className="icon text-white-50">
-                                <i className="fas fa-map-marker-alt"></i>
-                            </span>
-                            <span className="text">Acompanhar</span>
-                        </Link>
-                    ) : (null)
-                    }
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        <p>Status: {descStatus[props.delivery.status]}</p>
+                        {props.delivery.status === 1 ? (
+                            <div style={{ flex: 1, textAlign: 'center' }}>
+                                <Link to={`/follow/${props.delivery._id}`} className="btn btn-info btn-icon-split" >
+                                    <span className="icon text-white-50">
+                                        <i className="fas fa-map-marker-alt"></i>
+                                    </span>
+                                    <span className="text">Acompanhar</span>
+                                </Link>
+                            </div>
+                        ) : (null)
+                        }
+                    </div>
 
                 </div>
             </div>
         </div>
-        //<Link to={`/follow/${props.delivery._id}`}>{props.delivery.description}</Link>
     );
 }

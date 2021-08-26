@@ -9730,6 +9730,7 @@ a:focus {
 
 #wrapper {
   display: flex;
+  min-height: 100vh
 }
 
 #wrapper #content-wrapper {

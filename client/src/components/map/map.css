@@ -1,12 +1,16 @@
 .map {
   background-color: #282c34;
-  min-height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-  height: 1px;
+  height: 100%;
   width: 100%;
+}
+
+.recentralize {
+  top: .5em;
+  right: .5em;
 }
