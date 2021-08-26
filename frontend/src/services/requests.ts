@@ -1,7 +1,6 @@
 import api from './api';
 import * as types from '../types/interfaces';
 import { AxiosResponse } from 'axios';
-import { rest } from 'lodash';
 
 function getHeaders(withAuth: boolean){
     if (!withAuth) return { headers: { 'Content-Type': 'application/json' }};
@@ -15,12 +14,12 @@ function getHeaders(withAuth: boolean){
 }
 
 async function verifyAuthentication(res: AxiosResponse){
-    if (res.status == 401){ //unauthorized
+    if (res?.status == 401){ //unauthorized
         exit();
         return;
     }
 
-    const newToken = res.headers['x-access-token'];
+    const newToken = res?.headers['x-access-token'];
     if (newToken){
         console.log("novo token obtido");
         localStorage.setItem('x-access-token', newToken);

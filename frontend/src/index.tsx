@@ -1,17 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { CookiesProvider } from 'react-cookie';
-import { createStore, applyMiddleware, compose } from 'redux'
-import { Provider } from 'react-redux';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <CookiesProvider>
       <App />
-    </CookiesProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
