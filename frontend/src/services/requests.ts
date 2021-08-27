@@ -21,7 +21,6 @@ async function verifyAuthentication(res: AxiosResponse) {
 
     const newToken = res?.headers['x-access-token'];
     if (newToken) {
-        console.log("novo token obtido");
         localStorage.setItem('x-access-token', newToken);
     }
 }

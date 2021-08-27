@@ -3,13 +3,10 @@ import Driver from "../models/DriverModel";
 import DriverSession from '../models/DriverSessionModel';
 import { omit } from 'lodash';
 import { validateEmail, getAccessToken } from '../utils';
-
 const crypto = require("crypto");
 require("dotenv-safe").config();
-const jwt = require('jsonwebtoken');
 
 class DriverController {
-
   //authenticate driver login and returns an access token
   async authentication(req: Request, res: Response) {
     const { email, password } = req.body;

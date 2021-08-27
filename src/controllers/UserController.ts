@@ -3,13 +3,10 @@ import User from "../models/UserModel";
 import UserSession from '../models/UserSessionModel';
 import { omit } from 'lodash';
 import { validateEmail, getAccessToken } from '../utils';
-
 const crypto = require("crypto");
 require("dotenv-safe").config();
-const jwt = require('jsonwebtoken');
 
 class UserController {
-
   //authenticate user login and returns an access token
   async authentication(req: Request, res: Response) {
     const { email, password } = req.body;
