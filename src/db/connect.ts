@@ -1,21 +1,17 @@
-import log from "../logger";
 const mongoose = require("mongoose");
 
-function connect() {
-  const dbUri = process.env.DB_CONNECT;
-
+function connect(uri, callback: (error: Error, status: string) => void) {
   return mongoose
-    .connect(dbUri, {
+    .connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
     })
     .then(() => {
-      log.info("Database connected");
+      callback(null, "Database connected");
     })
     .catch((error) => {
-      log.error("db error", error);
-      process.exit(1);
+      callback(error, "Database connection fail");
     });
 }
 
