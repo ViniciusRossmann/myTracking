@@ -1,2 +1,2 @@
-const url: string = "http://192.168.0.101:3001/";
+const url: string = "http://localhost:3001/"; //backend server url, used in axios requests and socket.io connection
 export default url;

@@ -30,7 +30,7 @@ class VectorLayerComponent extends React.PureComponent<TVectorLayerComponentProp
     this.placeMarkers(this.props.positions);
   }
 
-  placeMarkers(positions: Location[] | undefined){
+  placeMarkers(positions: Location[] | undefined) {
     this.source.clear();
     if (positions === undefined) return;
     positions.forEach((position: Location) => {
@@ -40,17 +40,17 @@ class VectorLayerComponent extends React.PureComponent<TVectorLayerComponentProp
       const style = new Style({
         image: new Circle({
           radius: 6,
-          fill: new Fill({color: 'red'}),
+          fill: new Fill({ color: 'red' }),
           stroke: new Stroke({
-            color: [0,0,0], width: 2
+            color: [0, 0, 0], width: 2
           })
         })
       });
-      featureToAdd.setStyle(style);    
+      featureToAdd.setStyle(style);
       this.source.addFeatures([featureToAdd]);
     });
   }
-  
+
   componentWillUnmount() {
     this.props.map.removeLayer(this.layer);
   }

@@ -1,5 +1,4 @@
 import Map from "ol/Map";
-
 import { Location } from "../../types/interfaces";
 
 export type coord = {

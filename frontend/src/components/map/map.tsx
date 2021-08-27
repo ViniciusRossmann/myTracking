@@ -5,17 +5,14 @@ import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 import { VectorLayer } from "./layers";
 import { TMapProps, IMapContext, TMapState } from "./map-types";
-import Point from "ol/geom/Point";
 import { transform } from "ol/proj";
-import {Control, defaults as defaultControls} from 'ol/control';
-import { Vector, Group } from 'ol/layer';
+import { Control, defaults as defaultControls } from 'ol/control';
 import "ol/ol.css";
 import "./map.css";
-import { Location } from "../../types/interfaces";
 
+//control to center map on marked positions
 class CenterControl extends Control {
   constructor() {
-
     const button = document.createElement('button');
     button.innerHTML = '<i class="fas fa-map-marker-alt"></i>';
 
@@ -31,24 +28,25 @@ class CenterControl extends Control {
   }
 
   handleRecentralize() {
+    //calculates the center between all markers
     var coord1 = 0, coord2 = 0, nElem = 0;
     this.getMap().getLayers().forEach(layer => {
       const itensTree = layer.getProperties().source.featuresRtree_;
-      if(itensTree) {
+      if (itensTree) {
         itensTree.rbush_.data.children.forEach((element: any) => {
-          coord1+=element.value.values_.geometry.flatCoordinates[0];
-          coord2+=element.value.values_.geometry.flatCoordinates[1];
+          coord1 += element.value.values_.geometry.flatCoordinates[0];
+          coord2 += element.value.values_.geometry.flatCoordinates[1];
           nElem++;
         });
       }
     });
-    this.getMap().getView().setCenter([coord1/nElem, coord2/nElem]);
+    this.getMap().getView().setCenter([coord1 / nElem, coord2 / nElem]);
   }
 }
 
 export const MapContext = React.createContext<IMapContext | void>(undefined);
 
-export class MapComponent extends React.PureComponent<TMapProps, TMapState > {
+export class MapComponent extends React.PureComponent<TMapProps, TMapState> {
   private mapDivRef: React.RefObject<HTMLDivElement>;
   state: TMapState = {};
 
@@ -98,10 +96,10 @@ export class MapComponent extends React.PureComponent<TMapProps, TMapState > {
 
   render() {
     return (
-      <div className="map" ref={this.mapDivRef} style={{height: this.props.height, border: '2px solid black'}}>
+      <div className="map" ref={this.mapDivRef} style={{ height: this.props.height }}>
         {this.state.mapContext && (
           <MapContext.Provider value={this.state.mapContext}>
-            <VectorLayer positions={this.props.positions}/>
+            <VectorLayer positions={this.props.positions} />
           </MapContext.Provider>
         )}
       </div>

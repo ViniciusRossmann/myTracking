@@ -1,5 +1,4 @@
 import Map from "ol/Map";
-import Feature from "ol/Feature";
 import { Location } from "../../../../types/interfaces";
 
 export type TVectorLayerProps = {

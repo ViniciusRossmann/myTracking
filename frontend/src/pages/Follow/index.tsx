@@ -27,34 +27,34 @@ const Follow: React.FC = () => {
         setMapHeight(height)
         const loggedin = Boolean(localStorage.getItem('loggedin'));
         setAuth(loggedin);
-        if (loggedin){
+        if (loggedin) {
             loadDelivery();
         }
     }, [])
 
-    const loadDelivery = async () =>{
+    const loadDelivery = async () => {
         let delivery: types.Delivery = await requests.getDelivery(deliveryId);
-        if (delivery === null){
+        if (delivery === null) {
             history.push('/404');
             return;
         }
         setPageTitle(delivery.description);
         if (delivery.location) {
-            setMapCenter({latitude: delivery.location.coords.latitude, longitude: delivery.location.coords.longitude});
+            setMapCenter({ latitude: delivery.location.coords.latitude, longitude: delivery.location.coords.longitude });
             setPositions([delivery.location]);
         }
-        const socket = socketIOClient(url, {query: {delivery: deliveryId}});
+        const socket = socketIOClient(url, { query: { delivery: deliveryId } });
         setSocket(socket);
         socket.on("update_location", data => {
-            if(positions.length===0){
-                setMapCenter({latitude: data.coords.latitude, longitude: data.coords.longitude});
+            if (positions.length === 0) {
+                setMapCenter({ latitude: data.coords.latitude, longitude: data.coords.longitude });
             }
             setPositions([data]);
         });
     }
 
     const onLeave = () => {
-        if (socket){
+        if (socket) {
             socket.disconnect();
         }
     }

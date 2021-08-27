@@ -33,10 +33,10 @@ const Register: React.FC = () => {
             email: formData.email,
             password: formData.password
         }
-        requests.register(user, (status: number, msg: string)=>{
-            if (status == 201){ //created
-                requests.login({email: user.email, password: user.password}, (status: number, msg: string)=>{
-                    if(status==200) history.push('/');
+        requests.register(user, (status: number, msg: string) => {
+            if (status == 201) { //created
+                requests.login({ email: user.email, password: user.password }, (status: number, msg: string) => {
+                    if (status == 200) history.push('/');
                     else setLoginError(msg);
                 });
             }
@@ -44,23 +44,23 @@ const Register: React.FC = () => {
         });
     }
 
-    function validateData(): boolean{
-        if (formData.password !== formData.password2){
+    function validateData(): boolean {
+        if (formData.password !== formData.password2) {
             setLoginError("As senhas informadas não conferem!");
             return false;
         }
-        if (formData.name==="" || formData.email==="" || formData.password===""){
+        if (formData.name === "" || formData.email === "" || formData.password === "") {
             setLoginError("Preencha todos os campos!");
             return false;
         }
-        if (!validateEmail(formData.email)){
+        if (!validateEmail(formData.email)) {
             setLoginError("Informe um endereço de email válido!");
             return false;
         }
         return true;
     }
 
-    function validateEmail(email: string): boolean{
+    function validateEmail(email: string): boolean {
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
     }

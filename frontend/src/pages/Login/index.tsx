@@ -25,12 +25,12 @@ const Login: React.FC = () => {
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
-        if (formData.email === "" || formData.password === ""){
+        if (formData.email === "" || formData.password === "") {
             setLoginError("Informe um email e senha válidos!");
             return;
         }
-        requests.login(formData, (status: number, msg: string)=>{
-            if(status==200) history.push('/');
+        requests.login(formData, (status: number, msg: string) => {
+            if (status == 200) history.push('/');
             else setLoginError(msg);
         });
     }

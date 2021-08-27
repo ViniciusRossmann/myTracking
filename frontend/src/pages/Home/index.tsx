@@ -30,7 +30,7 @@ const Home: React.FC = () => {
             <div id="content-wrapper" className="d-flex flex-column">
                 <div id="content">
                     <TopBar title="myTracking" />
-                    
+
                     <div className="container-fluid">
                         <div className="d-sm-flex align-items-center justify-content-between mb-2">
                             <h1 className="h3 mb-0 text-gray-800">Seus rastreamentos:</h1>
