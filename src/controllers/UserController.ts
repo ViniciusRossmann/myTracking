@@ -1,38 +1,31 @@
 import { Request, Response } from 'express';
 import User from "../models/UserModel";
 import UserSession from '../models/UserSessionModel';
-import { omit } from 'lodash';
-import { validateEmail, getAccessToken } from '../utils';
+import { getAccessToken } from '../utils';
+import { createUser, validatePassword } from "../services/UserService";
 const crypto = require("crypto");
-require("dotenv-safe").config();
 
 class UserController {
   //authenticate user login and returns an access token
   async authentication(req: Request, res: Response) {
     const { email, password } = req.body;
-    
-    //verify email and password
-    if (!email || !password) return res.status(401).json({error: "Email ou senha inválidos."});
-    const user = await User.findOne({email});
-    if (!user || !(await user.comparePassword(password))){
-      return res.status(401).json({error: "Email ou senha inválidos."});
-    }
 
-    const basicUserData = omit(user.toJSON(), "password");
+    const basicUserData = await validatePassword(email, password);
+    if (!basicUserData) return res.status(401).json({error: "Email ou senha inválidos."});
 
     //generate access token
     const accessToken = getAccessToken({...basicUserData, type: "user"});
 
-    //generate refresh token in DB
+    //generate refresh token
     const refreshToken = new UserSession({
-      user: user.id,
+      user: basicUserData._id,
       token: crypto.randomBytes(40).toString('hex'),
       expires: new Date(Date.now() + 365*24*60*60*1000), //expires in 1y
       userAgent: req.get("user-agent") || ""
     });
     refreshToken.save();
 
-    //return user basic data, accessToken and refreshToken
+    //return basic user data, accessToken and refreshToken
     res.json({ user: basicUserData, accessToken, refreshToken: refreshToken.token });
   }
 
@@ -59,11 +52,9 @@ class UserController {
   //register a new user
   async register(req: Request, res: Response) {
     try {
-      if (!validateEmail(req.body.email)){
-        res.status(400).json({error: "Email inválido."});
-      }
-      await User.create(req.body);
-      return res.status(201).json({msg: "Usuário cadastrado com sucesso."});
+      const savedUser = await createUser(req.body);
+      const status = savedUser.hasOwnProperty('error') ? 409 : 201;
+      return res.status(status).json(savedUser);
     } catch (e) {
       return res.status(409).json({error: e.message});
     }

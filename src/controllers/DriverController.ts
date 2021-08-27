@@ -3,29 +3,23 @@ import Driver from "../models/DriverModel";
 import DriverSession from '../models/DriverSessionModel';
 import { omit } from 'lodash';
 import { validateEmail, getAccessToken } from '../utils';
+import { createDriver, validatePassword } from "../services/DriverService";
 const crypto = require("crypto");
-require("dotenv-safe").config();
 
 class DriverController {
   //authenticate driver login and returns an access token
   async authentication(req: Request, res: Response) {
     const { email, password } = req.body;
-    
-    //verify email and password
-    if (!email || !password) return res.status(401).json({error: "Email ou senha inválidos."});
-    const driver = await Driver.findOne({email});
-    if (!driver || !(await driver.comparePassword(password))){
-      return res.status(401).json({error: "Email ou senha inválidos."});
-    }
 
-    const basicDriverData = omit(driver.toJSON(), "password");
+    const basicDriverData = await validatePassword(email, password);
+    if (!basicDriverData) return res.status(401).json({error: "Email ou senha inválidos."});
 
     //generate access token
     const accessToken = getAccessToken({...basicDriverData, type: "driver"});
 
-    //generate refresh token in DB
+    //generate refresh token
     const refreshToken = new DriverSession({
-      driver: driver.id,
+      driver: basicDriverData._id,
       token: crypto.randomBytes(40).toString('hex'),
       expires: new Date(Date.now() + 365*24*60*60*1000), //expires in 1y
       userAgent: req.get("user-agent") || ""
@@ -59,11 +53,9 @@ class DriverController {
   //register a new driver
   async register(req: Request, res: Response) {
     try {
-      if (!validateEmail(req.body.email)){
-        res.status(400).json({error: "Email inválido."});
-      }
-      await Driver.create(req.body);
-      return res.status(201).json({msg: "Motorista cadastrado com sucesso."});
+      const savedDriver = await createDriver(req.body);
+      const status = savedDriver.hasOwnProperty('error') ? 409 : 201;
+      return res.status(status).json(savedDriver);
     } catch (e) {
       return res.status(409).json({error: e.message});
     }
