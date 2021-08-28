@@ -1,12 +1,12 @@
 import routes from "./routes";
-import connect from "./db/connect";
+import connect from "./connectors/DbConnector";
 import logger from "./logger";
 require('dotenv/config');
 const express = require('express');
 const cors = require('cors')
 const app = express();
 const server = require('http').createServer(app);
-const { socketConnection } = require('./socketControler');
+const { socketConnection } = require('./connectors/SocketConnector');
 
 //create websocket server
 socketConnection(server, { cors: {}});
