@@ -38,6 +38,7 @@
     "@types/jsonwebtoken": "^8.5.4",
     "@types/lodash": "^4.14.172",
     "@types/mongoose": "^5.11.97",
+    "@types/node": "^16.9.1",
     "@types/tape": "^4.13.2",
     "@types/yup": "^0.29.13",
     "concurrently": "^6.2.1",
